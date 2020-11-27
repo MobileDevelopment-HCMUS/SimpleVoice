@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/orange"
+    android:gravity="center">
+
+
+
+ <com.visualizer.amplitude.AudioRecordView
+     android:id="@+id/audioRecordView_standard"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     app:chunkAlignTo="bottom"
+     app:chunkRoundedCorners="true"
+     app:chunkSoftTransition="true"
+     app:chunkColor="@color/white"
+     app:chunkSpace="1dp"
+     app:chunkWidth="2dp"
+     app:chunkMaxHeight="48dp"
+     app:chunkMinHeight="2dp"
+  />
+
+</LinearLayout>

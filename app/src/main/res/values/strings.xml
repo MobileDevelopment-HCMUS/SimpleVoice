@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Voice Recorder</string>
+    <string name="app_title">Sound Recorder</string>
+    <string name="Speech2Text">Speech To Text</string>
+    <string name="SharingRecord">Sharing Record</string>
+    <string name="ToneModify">Tone Modify</string>
+    <string name="fab_content_desc">Start Recording</string>
+    <string name="Speech2text_desc">With this feature, you can convert speech to text directly in just a few seconds.</string>
+    <string name="SharingRecord_desc">Sharing is indispensable, you can share your recordings easily across many different applications.</string>
+    <string name="ToneModify_desc">You can enhance and lower the tone as you like when playing back your recordings.</string>
+    <string name="isStarted">Is Started</string>
+    <string name="translating_voice2text">Voice is being translated to text here...</string>
+    <string name="mouse_to_secure_folder">Mouse To Secure Folder</string>
+    <string name="edit">Edit</string>
+    <string name="rename">Rename</string>
+    <string name="detail">Detail</string>
+    <string name="share">Share</string>
+    <string name="convert_speech_to_text">Convert Speech To Text</string>
+    <string name="delete">Delete</string>
+    <string name="rename_recording">Rename recording</string>
+    <string name="details">Details</string>
+    <string name="name">Name</string>
+    <string name="size">Size</string>
+    <string name="last_modified">Last modified</string>
+    <string name="path">Path</string>
+    <string name="bit_rate">Bit rate</string>
+    <string name="convert">Convert</string>
+    <string name="location">Location</string>
+    <string name="setting">Setting</string>
+    <string name="speed">Speed</string>
+    <string name="tone">Tone</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>

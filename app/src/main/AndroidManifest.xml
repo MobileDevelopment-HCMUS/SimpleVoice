@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.voicerecorder">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/icon_app"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/icon_app"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.VoiceRecorder">
+        <activity android:name=".SpeechToTextDirectly"></activity>
+
+        <activity android:name=".SpeechToTextScreen"
+            android:parentActivityName=".PlayingRecordScreen"/>
+
+        <activity android:name=".PlayingRecordScreen"
+            android:parentActivityName=".ListRecord">
+
+        </activity>
+
+        <activity android:name=".ListRecord"
+            android:parentActivityName=".MainActivity"/>
+
+        <activity android:name=".PauseRecord"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".OnBoardingScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity" />
+    </application>
+
+</manifest>

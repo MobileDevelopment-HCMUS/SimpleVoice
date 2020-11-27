@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="390dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/quicksand_bold"
+        android:text="Do you want to delete it?"
+        android:textColor="@color/orange"
+        android:textSize="25sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="11">
+
+        <Button
+            android:id="@+id/yesButton_Delete"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_weight="5"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/quicksand_book"
+            android:text="@string/yes"
+            android:textColor="@color/orange"
+            android:textSize="17sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            android:text="|"
+            android:textAlignment="center"
+            android:textColor="@color/orange"
+            android:textSize="15sp"
+            tools:ignore="RtlCompat" />
+
+        <Button
+            android:id="@+id/noButton_Delete"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_weight="5"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/quicksand_book"
+            android:text="@string/no"
+            android:textColor="@color/orange"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
