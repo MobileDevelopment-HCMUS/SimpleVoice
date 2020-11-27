@@ -24,3 +24,6 @@ Please make sure to update tests as appropriate.
 ## Usage
 
 ## License
+
+##About
+Simple Voice is an android app which was developed as a final project for Mobile Development subject.
