@@ -3,7 +3,6 @@ package com.example.voicerecorder;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.Menu;
@@ -24,35 +23,32 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
     Toolbar toolbar;
     Chronometer currentPlayingRecordTime;
-    long pauseOffset;
-    int TotalPlayingRecordTime = 5;
     Button repeatButton, prevSecondButton, nextSecondButton, playButton, settingButton, playingRecordVolumeButton;
     TextView playingRecordName;
-
     TextView newName;
     Button OKButton_Rename, CancelButton_Rename;
-
     TextView name, size, lastModified, bitRate, path;
     Button OKButton_Detail;
-
     SeekBar toneSeekBar, speedSeekBar;
     Button OKButton_Setting, CancelButton_Setting;
-
     Button yesButton_Delete, noButton_Delete;
 
+    long pauseOffset;
+    int TotalPlayingRecordTime = 5;
     public int currentSpeed = 2;
     public int currentTone = 3;
 
     boolean isVolume = true;
     boolean isRepeat = false;
     boolean isPlaying = false;
-    String pathStr = "";
+    String pathStr ;
 
     Dialog dialog_Rename;
     Dialog dialog_Detail;
     Dialog dialog_Setting;
     Dialog dialog_Delete;
 
+    PlaybackManager playbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +57,9 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        pathStr = bundle.getString("path");
+//        pathStr = bundle.getString("path");
+        playbackManager = new PlaybackManager();
+        pathStr = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
 
         toolbar = findViewById(R.id.PlayingRecordToolBar);
         currentPlayingRecordTime = findViewById((R.id.currentPlayingRecordTime));
@@ -107,6 +105,9 @@ public class PlayingRecordScreen extends AppCompatActivity {
                 if (!isPlaying) {
                     playButton.setBackgroundResource(R.drawable.pause);
                     isPlaying = true;
+
+                    playbackManager.setOutputFile(pathStr);
+                    playbackManager.startPlayback();
                     currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                     currentPlayingRecordTime.start();
                 } else {

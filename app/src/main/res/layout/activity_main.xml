@@ -72,11 +72,13 @@
             android:textSize="50sp"
             android:textColor="@color/white"
             />
+
+
         <FrameLayout
             android:id="@+id/mode_fragment"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5" />
+            android:layout_height="wrap_content"
+             />
 
         <FrameLayout
             android:id="@+id/button_function_fragment"

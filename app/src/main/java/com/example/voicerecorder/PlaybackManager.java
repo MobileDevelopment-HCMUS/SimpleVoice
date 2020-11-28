@@ -1,4 +1,4 @@
-package com.example.voicetest;
+package com.example.voicerecorder;
 
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;

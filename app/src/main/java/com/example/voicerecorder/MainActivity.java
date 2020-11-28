@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     boolean isRecording = false;
     boolean isStandardMode = true;
     long pauseOffset;
-    int TotalPlayingRecordTime = 5;
+    String path;
 
     Toolbar toolbar;
     Button standardBtn, speech2textBtn;
@@ -40,13 +42,16 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     RecordingNavbarFragment recordingNavbarFragment;
     SpeechToTextFragment speechToTextFragment;
 
+    RecordManager recordManager;
+
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        recordManager = new RecordManager();
+        path  = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
         //create fragment start record
         ft = getSupportFragmentManager().beginTransaction();
         startRecordFragment = StartRecordFragment.newIntance("second_fragment");
@@ -109,8 +114,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
                     dlgAlert.create().show();
 
-                }
-                else{
+                } else {
                     startStandard();
                 }
             }
@@ -155,8 +159,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
                     dlgAlert.create().show();
 
-                }
-                else{
+                } else {
                     Speech2Text();
                 }
 
@@ -233,6 +236,13 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                 currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                 currentPlayingRecordTime.start();
 
+                try {
+                    recordManager.setOutputFile(path);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                recordManager.startRecord();
+
             }
 
         }
@@ -244,6 +254,9 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                 isRecording = false;
                 currentPlayingRecordTime.stop();
                 pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
+
+                //Stop recording
+                recordManager.stopRecord();
 
                 Intent intent = new Intent(this, PauseRecord.class);
                 startActivity(intent);
