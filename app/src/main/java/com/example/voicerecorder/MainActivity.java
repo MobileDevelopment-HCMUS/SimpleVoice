@@ -81,11 +81,11 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
         //set up the grapphView
         graphView.setMaxAmplitude(30000);
-        graphView.setGraphColor(Color.rgb(255,255,255));
-        graphView.setCanvasColor(getColor(R.color.orange));
+        graphView.setGraphColor(getColor(R.color.orange));
+        graphView.setCanvasColor(getColor(R.color.white));
         graphView.setTimeColor(Color.rgb(255, 255, 255));
-        graphView.setNeedleColor(getColor(R.color.white));
-        graphView.setMarkerColor(getColor(R.color.orange));
+        graphView.setNeedleColor(getColor(R.color.orange));
+        graphView.setMarkerColor(getColor(R.color.white));
 
 
         if (savedInstanceState != null) {

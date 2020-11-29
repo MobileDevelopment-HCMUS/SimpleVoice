@@ -19,6 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.gauravk.audiovisualizer.visualizer.BlobVisualizer;
+import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
+
 public class PlayingRecordScreen extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -32,6 +35,8 @@ public class PlayingRecordScreen extends AppCompatActivity {
     SeekBar toneSeekBar, speedSeekBar;
     Button OKButton_Setting, CancelButton_Setting;
     Button yesButton_Delete, noButton_Delete;
+
+    CircleLineVisualizer circleLineVisualizer;
 
     long pauseOffset;
     int TotalPlayingRecordTime = 5;
@@ -70,6 +75,9 @@ public class PlayingRecordScreen extends AppCompatActivity {
         settingButton = findViewById(R.id.settingButton);
         playingRecordVolumeButton = findViewById(R.id.playingRecordVolumeButton);
         playingRecordName = findViewById(R.id.playingRecordName);
+        circleLineVisualizer = findViewById(R.id.blobVisualizer);
+
+
 
 
         setSupportActionBar(toolbar);
@@ -108,8 +116,12 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
                     playbackManager.setOutputFile(pathStr);
                     playbackManager.startPlayback();
+
                     currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                     currentPlayingRecordTime.start();
+
+                   playbackManager.setCircleLineVisualizer(circleLineVisualizer);;
+
                 } else {
                     playButton.setBackgroundResource(R.drawable.play);
                     isPlaying = false;

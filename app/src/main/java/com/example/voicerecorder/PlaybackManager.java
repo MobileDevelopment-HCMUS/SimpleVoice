@@ -3,6 +3,10 @@ package com.example.voicerecorder;
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 
+import com.gauravk.audiovisualizer.visualizer.BlastVisualizer;
+import com.gauravk.audiovisualizer.visualizer.BlobVisualizer;
+import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -11,6 +15,14 @@ public class PlaybackManager {
     private static MediaPlayer mMediaPlayer;
     private static File file;
     private static Integer pitch;
+    CircleLineVisualizer circleLineVisualizer;
+
+    public void setCircleLineVisualizer(CircleLineVisualizer circleLineVisualizer){
+        this.circleLineVisualizer = circleLineVisualizer;
+    }
+
+
+
 
     public static abstract class Callback {
 
@@ -50,6 +62,10 @@ public class PlaybackManager {
             public void run() {
                 try {
                     start();
+                    int audiosessionid = mMediaPlayer.getAudioSessionId();
+                    if(audiosessionid!=-1) {
+                        circleLineVisualizer.setAudioSessionId(audiosessionid);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

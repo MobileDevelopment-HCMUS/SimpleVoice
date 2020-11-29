@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/orange"
+
     android:orientation="vertical"
     tools:context=".PauseRecord">
 
@@ -27,7 +27,7 @@
             android:fontFamily="@font/quicksand_book"
             android:text="00:00:01"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@color/orange"
             android:textSize="55dp" />
 
         <TextView
@@ -37,7 +37,7 @@
             android:fontFamily="@font/quicksand_book"
             android:text="Voice01"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@color/orange"
             android:textSize="20dp" />
 
     </LinearLayout>
@@ -48,6 +48,7 @@
         android:layout_weight="4"
         android:orientation="vertical">
 
+
     </LinearLayout>
 
 
@@ -56,6 +57,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
+        android:background="@color/orange"
         android:orientation="horizontal">
 
         <Button
