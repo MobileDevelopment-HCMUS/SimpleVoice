@@ -82,6 +82,7 @@ public class PlaybackManager {
 
         });
 
+
         mMediaPlayer.prepare();
         mMediaPlayer.start();
     }

@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/orange"
     android:orientation="vertical"
-    tools:context=".MainActivity"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    tools:context=".MainActivity"
 
     >
 
@@ -38,10 +37,10 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
+                android:background="@color/white"
                 android:fontFamily="@font/quicksand_bold"
                 android:gravity="center"
                 android:text="Standard"
-               android:background="@color/white"
                 android:textColor="@color/orange"
                 android:textSize="16sp" />
 
@@ -52,10 +51,10 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
+                android:background="@drawable/custom_convertbutton"
                 android:fontFamily="@font/quicksand_bold"
                 android:gravity="center"
                 android:text="@string/Speech2Text"
-                android:background="@drawable/custom_convertbutton"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
 
@@ -64,21 +63,32 @@
 
         <Chronometer
             android:id="@+id/time_record"
-            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:fontFamily="@font/quicksand_book"
-            android:textSize="50sp"
+            android:gravity="center"
             android:textColor="@color/white"
-            />
+            android:textSize="50sp" />
 
+        <com.example.voicerecorder.GraphView
+            android:id="@+id/graphView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="4"
+            android:fillViewport="true"
+
+            />
 
         <FrameLayout
             android:id="@+id/mode_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-             />
+            android:layout_weight="2"/>
 
         <FrameLayout
             android:id="@+id/button_function_fragment"

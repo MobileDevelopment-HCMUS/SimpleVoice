@@ -3,6 +3,7 @@ package com.example.voicerecorder;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.KeyEvent;
@@ -20,9 +21,18 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements MainCallbacks {
+
+    public static final String SCALE = "scale";
+    public static final String OUTPUT_DIRECTORY = "VoiceRecorder";
+    public static final String OUTPUT_FILENAME = "recorder.mp3";
+    private static final int MY_PERMISSIONS_REQUEST_CODE = 0;
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    int scale = 50;
 
     int backContinue = 1;
 
@@ -35,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     Toolbar toolbar;
     Button standardBtn, speech2textBtn;
     Chronometer currentPlayingRecordTime;
+    GraphView graphView;
+   List samples;
 
     FragmentTransaction ft;
     StandardFragment standardFragment;
@@ -51,13 +63,14 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         setContentView(R.layout.activity_main);
 
         recordManager = new RecordManager();
-        path  = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
+        path = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
         //create fragment start record
         ft = getSupportFragmentManager().beginTransaction();
         startRecordFragment = StartRecordFragment.newIntance("second_fragment");
         ft.replace(R.id.button_function_fragment, startRecordFragment);
         ft.commit();
 
+        graphView = findViewById(R.id.graphView);
         standardBtn = findViewById(R.id.standard_button);
         speech2textBtn = findViewById(R.id.speech2text_button);
 
@@ -66,6 +79,23 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         toolbar.setNavigationIcon(R.drawable.menu);
         currentPlayingRecordTime = findViewById(R.id.time_record);
 
+        //set up the grapphView
+        graphView.setMaxAmplitude(30000);
+        graphView.setGraphColor(Color.rgb(255,255,255));
+        graphView.setCanvasColor(getColor(R.color.orange));
+        graphView.setTimeColor(Color.rgb(255, 255, 255));
+        graphView.setNeedleColor(getColor(R.color.white));
+        graphView.setMarkerColor(getColor(R.color.orange));
+
+
+        if (savedInstanceState != null) {
+            scale = savedInstanceState.getInt(SCALE);
+            graphView.setWaveLengthPX(scale);
+            if (!recordManager.isRecording()) {
+                samples = recordManager.getSamples();
+                graphView.showFullGraph(samples);
+            }
+        }
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +199,13 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SCALE, scale);
+        super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.home_menu, menu);
@@ -242,6 +279,9 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                     e.printStackTrace();
                 }
                 recordManager.startRecord();
+                recordManager.startPlotting(graphView);
+                samples = recordManager.getSamples();
+                graphView.showFullGraph(samples);
 
             }
 
@@ -257,6 +297,9 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
                 //Stop recording
                 recordManager.stopRecord();
+                graphView.stopPlotting();
+                samples = recordManager.getSamples();
+                graphView.showFullGraph(samples);
 
                 Intent intent = new Intent(this, PauseRecord.class);
                 startActivity(intent);
@@ -270,6 +313,31 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             }
         }
     }
+
+//    public void zoomIn(View v) {
+//        scale = scale + 1;
+//        if (scale > 15) {
+//            scale = 15;
+//        }
+//        graphView.setWaveLengthPX(scale);
+//        if (!recordManager.isRecording()) {
+//            samples = recordManager.getSamples();
+//            graphView.showFullGraph(samples);
+//        }
+//    }
+//
+//    public void zoomOut(View v) {
+//        scale = scale - 1;
+//        if (scale < 2) {
+//            scale = 2;
+//        }
+//        graphView.setWaveLengthPX(scale);
+//        if (!recordManager.isRecording()) {
+//            samples = recordManager.getSamples();
+//            graphView.showFullGraph(samples);
+//        }
+//    }
+
 
     void startStandard() {
 
