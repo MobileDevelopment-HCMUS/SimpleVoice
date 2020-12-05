@@ -17,6 +17,8 @@ public class PlaybackManager {
     private static Integer pitch;
     CircleLineVisualizer circleLineVisualizer;
 
+    private int duration=0;
+
     public void setCircleLineVisualizer(CircleLineVisualizer circleLineVisualizer){
         this.circleLineVisualizer = circleLineVisualizer;
     }
@@ -71,6 +73,7 @@ public class PlaybackManager {
                 }
             }
         }).start();
+        duration=mMediaPlayer.getDuration();
     }
 
     private synchronized void start() throws IOException {
@@ -98,9 +101,68 @@ public class PlaybackManager {
 
         });
 
-
         mMediaPlayer.prepare();
         mMediaPlayer.start();
     }
+
+    public void stopPlayback(){
+        if (mCallback == null) {
+            return;
+        }
+        mMediaPlayer.release();
+        mMediaPlayer = null;
+        duration=0;
+    }
+
+    public void pausePlayback(){
+        if (mMediaPlayer == null) {
+            return;
+        }
+        mMediaPlayer.pause();
+    }
+
+    public void resumePlayback(){
+        if (mMediaPlayer == null) {
+            return;
+        }
+        mMediaPlayer.start();
+    }
+
+    public int getDuration(){
+        return duration;
+    }
+
+    public int getPosition(){
+        if (mMediaPlayer!=null){
+            return mMediaPlayer.getCurrentPosition();
+        }else {
+            return 0;
+        }
+    }
+
+    private int secondsToSeek=1;
+
+    public void forwardSeek(){
+        if (mMediaPlayer == null) {
+            return;
+        }
+        int newPosition=mMediaPlayer.getCurrentPosition()*secondsToSeek*1000;
+        mMediaPlayer.seekTo(newPosition<duration?newPosition:0);
+    }
+
+    public void backwardSeek(){
+        if (mMediaPlayer == null) {
+            return;
+        }
+        int newPosition=mMediaPlayer.getCurrentPosition()-secondsToSeek*1000;
+        mMediaPlayer.seekTo(newPosition>0?newPosition:0);
+    }
+
+     public void setPosition(int position){
+         if (mMediaPlayer == null) {
+             return;
+         }
+         mMediaPlayer.seekTo(position);
+     }
 
 }

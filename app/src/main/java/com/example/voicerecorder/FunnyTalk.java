@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 public class FunnyTalk {
 
-    ByteArrayOutputStream byteArrayOutputStream;
+    private ByteArrayOutputStream byteArrayOutputStream;
 
     private VoiceRecorder mVoiceRecorder;
 
@@ -84,7 +84,7 @@ public class FunnyTalk {
         }
     }
 
-    private void playRecord() throws IOException {
+    private void playRecord() {
 
         byte[] audioData=byteArrayOutputStream.toByteArray();
         int bufferSizeInBytes=audioData.length;
