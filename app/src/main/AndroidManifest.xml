@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -13,15 +14,17 @@
         android:roundIcon="@drawable/icon_app"
         android:supportsRtl="true"
         android:theme="@style/Theme.VoiceRecorder">
-        <activity android:name=".FunnyTalkLayout"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".SpeechToTextActivity"></activity>
+        <activity
+            android:name=".FunnyTalkLayout"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".SpeechToTextDirectly" />
         <activity
             android:name=".SpeechToTextScreen"
             android:parentActivityName=".PlayingRecordScreen" />
         <activity
             android:name=".PlayingRecordScreen"
-            android:parentActivityName=".ListRecord"></activity>
+            android:parentActivityName=".ListRecord" />
         <activity
             android:name=".ListRecord"
             android:parentActivityName=".MainActivity" />
@@ -42,7 +45,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
