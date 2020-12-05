@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -81,7 +82,17 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.back);
+
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         // Repeat Button OnClick
         repeatButton.setOnClickListener(new View.OnClickListener() {
@@ -329,5 +340,16 @@ public class PlayingRecordScreen extends AppCompatActivity {
         });
 
         dialog_Delete.show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
+            startActivity(intent);
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
