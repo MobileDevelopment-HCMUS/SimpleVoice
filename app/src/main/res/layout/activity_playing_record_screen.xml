@@ -9,19 +9,19 @@
     <include
         android:id="@+id/PlayingRecordToolBar"
         layout="@layout/playing_record_toolbar" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+
         android:layout_weight="3"
-        android:orientation="vertical"
-        android:background="@color/white"
-        >
+        android:orientation="vertical">
 
         <Chronometer
             android:id="@+id/currentPlayingRecordTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:countDown="false"
             android:fontFamily="@font/quicksand_book"
             android:gravity="center_horizontal"
@@ -40,27 +40,33 @@
             android:textSize="30sp" />
     </LinearLayout>
 
-    <com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer
-        xmlns:custom="http://schemas.android.com/apk/res-auto"
+    <com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:id="@+id/blobVisualizer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="7"
-        android:background="@color/white"
-        custom:avDensity="0.8"
-        custom:avType="fill"
         custom:avColor="@color/orange"
-        custom:avSpeed="normal"/>
+        custom:avDensity="0.8"
+        custom:avSpeed="normal"
+        custom:avType="fill" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:background="@color/orange"
+        android:min="0" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="12dp"
         android:layout_weight="3"
         android:background="@color/orange"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:padding="12dp"
         android:weightSum="5">
 
         <LinearLayout
@@ -75,7 +81,7 @@
                 android:layout_width="40dp"
                 android:layout_height="35dp"
                 android:background="@color/tranparent"
-                android:foreground="@drawable/unrepeat"/>
+                android:foreground="@drawable/unrepeat" />
 
             <TextView
                 android:layout_width="match_parent"

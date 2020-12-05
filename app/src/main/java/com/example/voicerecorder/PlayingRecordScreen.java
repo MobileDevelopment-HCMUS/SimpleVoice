@@ -3,6 +3,7 @@ package com.example.voicerecorder;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.KeyEvent;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.gauravk.audiovisualizer.visualizer.BlobVisualizer;
 import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
 
 public class PlayingRecordScreen extends AppCompatActivity {
@@ -34,10 +35,12 @@ public class PlayingRecordScreen extends AppCompatActivity {
     TextView name, size, lastModified, bitRate, path;
     Button OKButton_Detail;
     SeekBar toneSeekBar, speedSeekBar;
+    ProgressBar progressBar;
     Button OKButton_Setting, CancelButton_Setting;
     Button yesButton_Delete, noButton_Delete;
 
     CircleLineVisualizer circleLineVisualizer;
+
 
     long pauseOffset;
     int TotalPlayingRecordTime = 5;
@@ -47,7 +50,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
     boolean isVolume = true;
     boolean isRepeat = false;
     boolean isPlaying = false;
-    String pathStr ;
+    String pathStr;
 
     Dialog dialog_Rename;
     Dialog dialog_Detail;
@@ -77,8 +80,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
         playingRecordVolumeButton = findViewById(R.id.playingRecordVolumeButton);
         playingRecordName = findViewById(R.id.playingRecordName);
         circleLineVisualizer = findViewById(R.id.blobVisualizer);
-
-
+        progressBar = findViewById(R.id.progressBar);
 
 
         setSupportActionBar(toolbar);
@@ -130,8 +132,13 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
                     currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                     currentPlayingRecordTime.start();
+                    playbackManager.setDuration(TotalPlayingRecordTime);
 
-                   playbackManager.setCircleLineVisualizer(circleLineVisualizer);;
+                    playbackManager.setCircleLineVisualizer(circleLineVisualizer);
+
+                    playbackManager.setProgressBar(progressBar);
+                    progressBar.setProgress(0);
+                    progressBar.setVisibility(View.VISIBLE);
 
                 } else {
                     playButton.setBackgroundResource(R.drawable.play);
@@ -139,6 +146,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     currentPlayingRecordTime.stop();
                     pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
                 }
+
             }
         });
 
