@@ -73,7 +73,7 @@ public class PlaybackManager {
                 }
             }
         }).start();
-        duration=mMediaPlayer.getDuration();
+
     }
 
     private synchronized void start() throws IOException {
@@ -103,6 +103,7 @@ public class PlaybackManager {
 
         mMediaPlayer.prepare();
         mMediaPlayer.start();
+        duration=mMediaPlayer.getDuration();
     }
 
     public void stopPlayback(){
