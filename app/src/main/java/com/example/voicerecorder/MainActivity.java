@@ -9,11 +9,13 @@ import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     Button standardBtn, speech2textBtn;
     Chronometer currentPlayingRecordTime;
     GraphView graphView;
-   List samples;
+    List samples;
 
     FragmentTransaction ft;
     StandardFragment standardFragment;
@@ -210,6 +212,19 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.home_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.home_funnytalk: {
+                Intent intent = new Intent(MainActivity.this, FunnyTalkLayout.class);
+                startActivity(intent);
+            }
+            return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

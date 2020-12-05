@@ -1,7 +1,9 @@
-package com.example.voicetest;
+package com.example.voicerecorder;
 
 import android.media.AudioTrack;
 import android.widget.Toast;
+
+import com.example.voicerecorder.VoiceRecorder;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

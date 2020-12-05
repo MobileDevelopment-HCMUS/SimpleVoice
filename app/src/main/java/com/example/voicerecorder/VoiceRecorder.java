@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.voicetest;
+package com.example.voicerecorder;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;

@@ -2,9 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.voicerecorder">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon_app"
@@ -12,21 +13,21 @@
         android:roundIcon="@drawable/icon_app"
         android:supportsRtl="true"
         android:theme="@style/Theme.VoiceRecorder">
-        <activity android:name=".SpeechToTextDirectly"></activity>
-
-        <activity android:name=".SpeechToTextScreen"
-            android:parentActivityName=".PlayingRecordScreen"/>
-
-        <activity android:name=".PlayingRecordScreen"
-            android:parentActivityName=".ListRecord">
-
-        </activity>
-
-        <activity android:name=".ListRecord"
-            android:parentActivityName=".MainActivity"/>
-
-        <activity android:name=".PauseRecord"
-            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".FunnyTalkLayout"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".SpeechToTextDirectly" />
+        <activity
+            android:name=".SpeechToTextScreen"
+            android:parentActivityName=".PlayingRecordScreen" />
+        <activity
+            android:name=".PlayingRecordScreen"
+            android:parentActivityName=".ListRecord"></activity>
+        <activity
+            android:name=".ListRecord"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".PauseRecord"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".OnBoardingScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
