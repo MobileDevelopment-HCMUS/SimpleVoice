@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
         graphView = findViewById(R.id.graphView);
         standardBtn = findViewById(R.id.standard_button);
-        speech2textBtn = findViewById(R.id.speech2text_button);
+        speech2textBtn = (Button) findViewById(R.id.speech2text_button);
 
         toolbar = findViewById(R.id.home_toolbar);
         setSupportActionBar(toolbar);
@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         speech2textBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (isStandardMode == true && isRecording == true) {
 
                     AlertDialog.Builder dlgAlert;
@@ -192,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                     dlgAlert.create().show();
 
                 } else {
-                    Speech2Text();
+                    startActivity(new Intent(MainActivity.this, SpeechToTextActivity.class));
                 }
 
             }

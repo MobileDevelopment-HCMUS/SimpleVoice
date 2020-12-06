@@ -1,5 +1,10 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.protobuf'
+}
+
+ext {
+    grpcVersion = '1.23.0'
 }
 
 android {
@@ -12,14 +17,20 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled  true
+        packagingOptions{
+            exclude 'META-INF/INDEX.LIST'
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        configurations.all {
+            resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
         }
     }
     compileOptions {
@@ -38,4 +49,13 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.github.Armen101:AudioRecordView:1.0.2'
     implementation 'com.gauravk.audiovisualizer:audiovisualizer:0.9.2'
+
+    implementation 'com.jakewharton:butterknife:8.8.0'
+    implementation "io.grpc:grpc-okhttp:$grpcVersion"
+    implementation "io.grpc:grpc-stub:$grpcVersion"
+    implementation group: 'com.google.api.grpc', name: 'grpc-google-cloud-speech-v1', version: '1.10.0'
+    implementation('com.google.auth:google-auth-library-oauth2-http:0.7.0')
+            {
+                exclude module: 'httpclient'
+            }
 }
