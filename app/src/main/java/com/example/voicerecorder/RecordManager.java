@@ -139,4 +139,8 @@ public class RecordManager {
         mMediaRecorder = null;
     }
 
+    public void setLocation(float latitude, float longitude) {
+        mMediaRecorder.setLocation(latitude, longitude);
+    }
+
 }
