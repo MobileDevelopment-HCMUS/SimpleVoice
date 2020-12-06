@@ -2,9 +2,8 @@ package com.example.voicerecorder;
 
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
+import android.widget.ProgressBar;
 
-import com.gauravk.audiovisualizer.visualizer.BlastVisualizer;
-import com.gauravk.audiovisualizer.visualizer.BlobVisualizer;
 import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
 
 import java.io.File;
@@ -16,15 +15,21 @@ public class PlaybackManager {
     private static File file;
     private static Integer pitch;
     CircleLineVisualizer circleLineVisualizer;
+    ProgressBar progressBar;
 
-    private int duration=0;
+    private int duration = 0;
 
-    public void setCircleLineVisualizer(CircleLineVisualizer circleLineVisualizer){
+    public void setCircleLineVisualizer(CircleLineVisualizer circleLineVisualizer) {
         this.circleLineVisualizer = circleLineVisualizer;
     }
 
+    public void setProgressBar(ProgressBar progressBar) {
+        this.progressBar = progressBar;
+    }
 
-
+    public void setDuration(int total){
+        duration = total;
+    }
 
     public static abstract class Callback {
 
@@ -64,8 +69,23 @@ public class PlaybackManager {
             public void run() {
                 try {
                     start();
+                    progressBar.setMax(duration);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try{
+                                while (getPosition() < progressBar.getMax()) {
+                                    progressBar.setProgress(getPosition());
+                                }
+                            }catch (IllegalStateException e){
+                                throw e;
+                            }
+                        }
+                    }).start();
+
+
                     int audiosessionid = mMediaPlayer.getAudioSessionId();
-                    if(audiosessionid!=-1) {
+                    if (audiosessionid != -1) {
                         circleLineVisualizer.setAudioSessionId(audiosessionid);
                     }
                 } catch (IOException e) {
@@ -73,7 +93,7 @@ public class PlaybackManager {
                 }
             }
         }).start();
-        duration=mMediaPlayer.getDuration();
+
     }
 
     private synchronized void start() throws IOException {
@@ -103,66 +123,67 @@ public class PlaybackManager {
 
         mMediaPlayer.prepare();
         mMediaPlayer.start();
+        duration = mMediaPlayer.getDuration();
     }
 
-    public void stopPlayback(){
+    public void stopPlayback() {
         if (mCallback == null) {
             return;
         }
         mMediaPlayer.release();
         mMediaPlayer = null;
-        duration=0;
+        duration = 0;
     }
 
-    public void pausePlayback(){
+    public void pausePlayback() {
         if (mMediaPlayer == null) {
             return;
         }
         mMediaPlayer.pause();
     }
 
-    public void resumePlayback(){
+    public void resumePlayback() {
         if (mMediaPlayer == null) {
             return;
         }
         mMediaPlayer.start();
     }
 
-    public int getDuration(){
+    public int getDuration() {
         return duration;
     }
 
-    public int getPosition(){
-        if (mMediaPlayer!=null){
+    public int getPosition() {
+        if (mMediaPlayer != null) {
             return mMediaPlayer.getCurrentPosition();
-        }else {
+        } else {
             return 0;
         }
     }
 
-    private int secondsToSeek=1;
+    private int secondsToSeek = 1;
 
-    public void forwardSeek(){
+    public void forwardSeek() {
         if (mMediaPlayer == null) {
             return;
         }
-        int newPosition=mMediaPlayer.getCurrentPosition()*secondsToSeek*1000;
-        mMediaPlayer.seekTo(newPosition<duration?newPosition:0);
+        int newPosition = mMediaPlayer.getCurrentPosition() * secondsToSeek * 1000;
+        mMediaPlayer.seekTo(newPosition < duration ? newPosition : 0);
     }
 
-    public void backwardSeek(){
+    public void backwardSeek() {
         if (mMediaPlayer == null) {
             return;
         }
-        int newPosition=mMediaPlayer.getCurrentPosition()-secondsToSeek*1000;
-        mMediaPlayer.seekTo(newPosition>0?newPosition:0);
+        int newPosition = mMediaPlayer.getCurrentPosition() - secondsToSeek * 1000;
+        mMediaPlayer.seekTo(newPosition > 0 ? newPosition : 0);
     }
 
-     public void setPosition(int position){
-         if (mMediaPlayer == null) {
-             return;
-         }
-         mMediaPlayer.seekTo(position);
-     }
+    public void setPosition(int position) {
+        if (mMediaPlayer == null) {
+            return;
+        }
+        mMediaPlayer.seekTo(position);
+    }
 
 }

@@ -14,5 +14,6 @@
         <item name="android:statusBarColor" tools:targetApi="l">
             ?attr/colorOnBackground</item>
         <!-- Customize your theme here. -->
+
     </style>
 </resources>
