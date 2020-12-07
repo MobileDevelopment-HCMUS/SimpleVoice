@@ -326,9 +326,8 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                recordManager.startRecord();
-                //set location
                 getLocation();
+                recordManager.startRecord();
                 recordManager.startPlotting(graphView);
                 samples = recordManager.getSamples();
                 graphView.showFullGraph(samples);
@@ -372,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
-                    //recordManager.setLocation((float) location.getLatitude(), (float) location.getLongitude());
+                    recordManager.setLocation((float) location.getLatitude(), (float) location.getLongitude());
                     Log.d(TAG, location.toString());
                     Log.d(TAG, "Get location successful");
                 }

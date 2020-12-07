@@ -17,6 +17,8 @@ public class RecordManager {
     private volatile Boolean stop = false;
     private GraphView graphView;
     private Thread mRecordingThread;
+    private float latitude;
+    private float longitude;
 
     public boolean startPlotting(GraphView graphView) {
         if (graphView != null) {
@@ -120,6 +122,7 @@ public class RecordManager {
         mr.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
         mr.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         mr.setOutputFile(file.getAbsolutePath());
+        mr.setLocation(latitude, longitude);
     }
 
     public void stopRecord() {
@@ -140,7 +143,8 @@ public class RecordManager {
     }
 
     public void setLocation(float latitude, float longitude) {
-        mMediaRecorder.setLocation(latitude, longitude);
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
 }
