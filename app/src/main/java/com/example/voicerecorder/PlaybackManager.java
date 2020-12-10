@@ -13,7 +13,8 @@ public class PlaybackManager {
 
     private static MediaPlayer mMediaPlayer;
     private static File file;
-    private static Integer pitch;
+    private static Float pitch;
+    private static Float speed;
     CircleLineVisualizer circleLineVisualizer;
     ProgressBar progressBar;
 
@@ -55,8 +56,11 @@ public class PlaybackManager {
         return result;
     }
 
-    public void setPitch(int pitch) {
+    public void setPitch(float pitch) {
         this.pitch = pitch;
+    }
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 
     public void startPlayback(Callback... callbacks) {
@@ -106,6 +110,10 @@ public class PlaybackManager {
         PlaybackParams playbackParams = new PlaybackParams();
         if (pitch != null) {
             playbackParams.setPitch(pitch);
+        }
+
+        if (speed != null) {
+            playbackParams.setSpeed(speed);
         }
         mMediaPlayer.setPlaybackParams(playbackParams);
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
