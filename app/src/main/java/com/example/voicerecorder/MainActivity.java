@@ -1,11 +1,17 @@
 package com.example.voicerecorder;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +26,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +50,12 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     public static final String OUTPUT_FILENAME = "recorder.mp3";
     private static final int MY_PERMISSIONS_REQUEST_CODE = 0;
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    private static final String TAG = MainActivity.class.getSimpleName();
     int scale = 50;
+
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Location mCurrentLocation = null;
 
     int backContinue = 1;
 
@@ -64,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
         recordManager = new RecordManager();
         path = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
         //create fragment start record
@@ -80,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.menu);
         currentPlayingRecordTime = findViewById(R.id.time_record);
+
 
         //set up the grapphView
         graphView.setMaxAmplitude(30000);
@@ -200,6 +223,16 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if(!checkPermissions()) {
+            askLocationPermission();
+            Log.d(TAG, "This is Permission request");
+        }
+
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(SCALE, scale);
         super.onSaveInstanceState(outState);
@@ -270,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         return false;
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMsgFromFragmentToMain(String sender, String booleanstr) {
         if (sender.equals("READY_RECORD") == true) {
@@ -292,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                getLocation();
                 recordManager.startRecord();
                 recordManager.startPlotting(graphView);
                 samples = recordManager.getSamples();
@@ -328,6 +363,28 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private void getLocation()
+    {
+        if(checkPermissions())
+        {
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    recordManager.setLocation((float) location.getLatitude(), (float) location.getLongitude());
+                    Log.d(TAG, location.toString());
+                    Log.d(TAG, "Get location successful");
+                }
+            }).addOnFailureListener(this, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Cannot get location");
+                }
+            });
+
+
+        }
+    }
 //    public void zoomIn(View v) {
 //        scale = scale + 1;
 //        if (scale > 15) {
@@ -412,6 +469,69 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         clicked = false;
         backContinue = 1;
     }
+
+    private void showSnackbar(final int mainTextStringId, final int actionStringId,
+                              View.OnClickListener listener) {
+        Snackbar.make(
+                findViewById(android.R.id.content),
+                getString(mainTextStringId),
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(actionStringId), listener).show();
+    }
+
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermissions() {
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION);
+
+        // Provide an additional rationale to the user. This would happen if the user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale) {
+            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            showSnackbar(R.string.permission_rationale,
+                    android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // Request permission
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                        }
+                    });
+        } else {
+            Log.i(TAG, "Requesting permission");
+            // Request permission. It's possible this can be auto answered if device policy
+            // sets the permission in a given state or the user denied the permission
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    public void askLocationPermission()
+    {
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED)
+        {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION))
+            {
+                Log.d(TAG, "askLocationPermission: alertbox here");
+                ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
+            }
+            else
+            {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
+            }
+        }
+    }
+
 
 
 }

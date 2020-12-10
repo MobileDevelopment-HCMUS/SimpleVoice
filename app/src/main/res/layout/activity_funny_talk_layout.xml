@@ -11,14 +11,20 @@
         layout="@layout/funny_talk_toolbar" />
 
     <LinearLayout
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="11"
         android:background="@color/white">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/microphone_play"/>
     </LinearLayout>
 
     <LinearLayout
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
+
+import java.io.File;
 
 public class PlayingRecordScreen extends AppCompatActivity {
 
@@ -217,6 +220,8 @@ public class PlayingRecordScreen extends AppCompatActivity {
             return true;
             case R.id.shareItem: {
                 Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
+                Log.d("Path: ", pathStr);
+                Sharing.shareFile(PlayingRecordScreen.this, new File(pathStr));
             }
             return true;
             case R.id.convertSpeechToTextItem: {

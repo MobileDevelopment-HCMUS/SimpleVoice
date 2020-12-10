@@ -31,7 +31,7 @@ public class FunnyTalkLayout extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isPlaying){
-                    funnyTalkButton.setBackgroundResource(R.drawable.pause);
+                    funnyTalkButton.setBackgroundResource(R.drawable.stop);
                     isPlaying = true;
                     funnyTalk.startVoiceRecorder();
                 }
