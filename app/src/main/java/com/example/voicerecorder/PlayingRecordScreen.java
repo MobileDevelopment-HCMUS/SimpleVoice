@@ -119,6 +119,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(PlayingRecordScreen.this, "-1s", Toast.LENGTH_SHORT).show();
+                playbackManager.backwardSeek();
             }
         });
 
@@ -131,6 +132,8 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     isPlaying = true;
 
                     playbackManager.setOutputFile(pathStr);
+                    playbackManager.setPitch(1.0f+(currentTone-3)*0.2f);
+                    playbackManager.setSpeed(1.0f+(currentSpeed-2)*0.25f);
                     playbackManager.startPlayback();
 
                     currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
@@ -170,6 +173,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(PlayingRecordScreen.this, "+1s", Toast.LENGTH_SHORT).show();
+                playbackManager.forwardSeek();
             }
         });
 
