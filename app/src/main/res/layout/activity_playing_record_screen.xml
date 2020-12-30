@@ -40,7 +40,8 @@
             android:textSize="30sp" />
     </LinearLayout>
 
-    <com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer xmlns:custom="http://schemas.android.com/apk/res-auto"
+    <com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:id="@+id/blobVisualizer"
         android:layout_width="match_parent"
         android:layout_height="0dp"

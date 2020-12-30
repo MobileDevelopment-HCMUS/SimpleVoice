@@ -138,7 +138,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
                     currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                     currentPlayingRecordTime.start();
-                    playbackManager.setDuration(TotalPlayingRecordTime);
+
 
                     playbackManager.setCircleLineVisualizer(circleLineVisualizer);
 
@@ -368,5 +368,12 @@ public class PlayingRecordScreen extends AppCompatActivity {
             finish();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (circleLineVisualizer != null)
+            circleLineVisualizer.release();
     }
 }

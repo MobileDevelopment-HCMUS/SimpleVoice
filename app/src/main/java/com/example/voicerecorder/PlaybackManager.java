@@ -28,9 +28,7 @@ public class PlaybackManager {
         this.progressBar = progressBar;
     }
 
-    public void setDuration(int total){
-        duration = total;
-    }
+
 
     public static abstract class Callback {
 
@@ -163,7 +161,11 @@ public class PlaybackManager {
 
     public int getPosition() {
         if (mMediaPlayer != null) {
-            return mMediaPlayer.getCurrentPosition();
+            try {
+                return mMediaPlayer.getCurrentPosition();
+            }catch (IllegalStateException e){
+               return 0;
+            }
         } else {
             return 0;
         }
@@ -175,7 +177,7 @@ public class PlaybackManager {
         if (mMediaPlayer == null) {
             return;
         }
-        int newPosition = mMediaPlayer.getCurrentPosition() * secondsToSeek * 1000;
+        int newPosition = mMediaPlayer.getCurrentPosition() + secondsToSeek * 1000;
         mMediaPlayer.seekTo(newPosition < duration ? newPosition : 0);
     }
 
