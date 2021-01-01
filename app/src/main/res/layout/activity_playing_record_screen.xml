@@ -28,14 +28,14 @@
             android:textColor="@color/orange"
             android:textSize="60sp" />
 
-        <TextView
-            android:id="@+id/totalPlayingRecordTime"
+        <Chronometer
+            android:id="@+id/totalPlayingRecordTime_Speech"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+
+            android:countDown="false"
             android:fontFamily="@font/quicksand_book"
             android:gravity="center_horizontal"
-            android:text="00:05"
             android:textColor="@color/orange"
             android:textSize="30sp" />
     </LinearLayout>

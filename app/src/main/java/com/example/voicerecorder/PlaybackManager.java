@@ -61,8 +61,44 @@ public class PlaybackManager {
         this.speed = speed;
     }
 
+    public void prepareplayBack() throws IOException {
+        mMediaPlayer = new MediaPlayer();
+        if (mMediaPlayer == null) {
+            return;
+        }
+        mMediaPlayer.setDataSource(file.getAbsolutePath());
+
+        PlaybackParams playbackParams = new PlaybackParams();
+        if (pitch != null) {
+            playbackParams.setPitch(pitch);
+        }
+
+        if (speed != null) {
+            playbackParams.setSpeed(speed);
+        }
+        mMediaPlayer.setPlaybackParams(playbackParams);
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (mCallback != null) {
+                    mCallback.onCompletion();
+                }
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+            }
+
+        });
+
+        mMediaPlayer.prepare();
+        duration = mMediaPlayer.getDuration();
+    }
+
     public void startPlayback(Callback... callbacks) {
-        if (mMediaPlayer != null) {
+//        if (mMediaPlayer != null) {
+//            return;
+//        }
+        if(mMediaPlayer==null){
             return;
         }
         mCallback = (callbacks.length > 0) ? callbacks[0] : null;
@@ -99,37 +135,9 @@ public class PlaybackManager {
     }
 
     private synchronized void start() throws IOException {
-        mMediaPlayer = new MediaPlayer();
-        if (mMediaPlayer == null) {
-            return;
+        if(mMediaPlayer!=null){
+            mMediaPlayer.start();
         }
-        mMediaPlayer.setDataSource(file.getAbsolutePath());
-
-        PlaybackParams playbackParams = new PlaybackParams();
-        if (pitch != null) {
-            playbackParams.setPitch(pitch);
-        }
-
-        if (speed != null) {
-            playbackParams.setSpeed(speed);
-        }
-        mMediaPlayer.setPlaybackParams(playbackParams);
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if (mCallback != null) {
-                    mCallback.onCompletion();
-                }
-                mMediaPlayer.release();
-                mMediaPlayer = null;
-            }
-
-        });
-
-        mMediaPlayer.prepare();
-        mMediaPlayer.start();
-        duration = mMediaPlayer.getDuration();
     }
 
     public void stopPlayback() {

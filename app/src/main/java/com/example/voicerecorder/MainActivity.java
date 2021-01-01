@@ -351,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                 graphView.showFullGraph(samples);
 
                 Intent intent = new Intent(this, PauseRecord.class);
+                intent.putExtra("time",pauseOffset);
                 startActivity(intent);
                 finish();
             }
@@ -408,7 +409,6 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 //            graphView.showFullGraph(samples);
 //        }
 //    }
-
 
     void startStandard() {
 
