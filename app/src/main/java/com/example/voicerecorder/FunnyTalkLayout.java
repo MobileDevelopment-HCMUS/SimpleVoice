@@ -48,7 +48,23 @@ public class FunnyTalkLayout extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
         isPlaying=false;
         funnyTalk.stopVoiceRecorder();
+        funnyTalkButton.setBackgroundResource(R.drawable.play);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isPlaying=false;
+        funnyTalk.stopVoiceRecorder();
+        funnyTalkButton.setBackgroundResource(R.drawable.play);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 }

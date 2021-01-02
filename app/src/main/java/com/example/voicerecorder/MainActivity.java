@@ -5,12 +5,9 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -31,15 +28,12 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,10 +53,12 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
     int backContinue = 1;
 
+    boolean recorded = false;
     boolean clicked = false;
     boolean isRecording = false;
     boolean isStandardMode = true;
-    long pauseOffset;
+    int isInterupted = 0;
+    long pauseOffset = 0;
     String path;
 
     Toolbar toolbar;
@@ -78,6 +74,14 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     SpeechToTextFragment speechToTextFragment;
 
     RecordManager recordManager;
+
+    @Override
+    protected void onResume() {
+        //Toast.makeText(this, "OnResume", Toast.LENGTH_SHORT).show();
+
+        super.onResume();
+
+    }
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -113,14 +117,25 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         graphView.setMarkerColor(getColor(R.color.white));
 
 
-        if (savedInstanceState != null) {
-            scale = savedInstanceState.getInt(SCALE);
-            graphView.setWaveLengthPX(scale);
-            if (!recordManager.isRecording()) {
-                samples = recordManager.getSamples();
-                graphView.showFullGraph(samples);
-            }
-        }
+//        if (savedInstanceState != null) {
+//            scale = savedInstanceState.getInt(SCALE);
+//            graphView.setWaveLengthPX(scale);
+//            if (!recordManager.isRecording()) {
+//                samples = recordManager.getSamples();
+//                graphView.showFullGraph(samples);
+//            }
+////            int isInterupted = savedInstanceState.getInt("isInterupted");
+////            if (isInterupted == 1) {
+////                long pause = savedInstanceState.getLong("pauseOffset");
+////                String filePath = savedInstanceState.getString("filePath");
+////
+////                Intent intent = new Intent(this, PauseRecord.class);
+////                intent.putExtra("time", pause);
+////                intent.putExtra("filePath", filePath);
+////                startActivity(intent);
+////                finish();
+////            }
+//        }
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,19 +240,50 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     @Override
     protected void onStart() {
         super.onStart();
-        if(!checkPermissions()) {
+        if (!checkPermissions()) {
             askLocationPermission();
             Log.d(TAG, "This is Permission request");
+        }
+        if (isInterupted == 1 && recorded) {
+
+            Intent intent = new Intent(this, PauseRecord.class);
+            intent.putExtra("time", pauseOffset);
+            intent.putExtra("filePath", path);
+            startActivity(intent);
+            finish();
         }
 
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(SCALE, scale);
-        super.onSaveInstanceState(outState);
+    protected void onPause() {
+        super.onPause();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isRecording = false;
+        currentPlayingRecordTime.stop();
+        pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
+
+        //Stop recording
+        recordManager.stopRecord();
+        graphView.stopPlotting();
+        samples = recordManager.getSamples();
+        graphView.showFullGraph(samples);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        isInterupted = 1;
+        outState.putInt(SCALE, scale);
+        //outState.putInt("isInterupted", isInterupted);
+        //outState.putString("filePath", path);
+        //outState.putLong("pauseOffset", pauseOffset);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -310,7 +356,9 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
             if (booleanstr.equals("START") == true) {
 
+                recorded = true;
                 clicked = true;
+
                 //create fragment recording button fragment
                 ft = getSupportFragmentManager().beginTransaction();
                 recordingNavbarFragment = RecordingNavbarFragment.newIntance("third_fragment");
@@ -318,7 +366,10 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                 ft.commit();
 
                 isRecording = true;
-                currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+                if (recorded) {
+                    currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+                }
+                recordManager = new RecordManager();
                 currentPlayingRecordTime.start();
 
                 try {
@@ -339,10 +390,12 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         if (sender.equals("RECORDING") == true) {
 
             if (booleanstr.equals("STOP") == true) {
-
+                if (isRecording) {
+                    pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
+                }
                 isRecording = false;
                 currentPlayingRecordTime.stop();
-                pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
+
 
                 //Stop recording
                 recordManager.stopRecord();
@@ -351,7 +404,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                 graphView.showFullGraph(samples);
 
                 Intent intent = new Intent(this, PauseRecord.class);
-                intent.putExtra("time",pauseOffset);
+                intent.putExtra("time", pauseOffset);
                 startActivity(intent);
                 finish();
             }
@@ -365,10 +418,8 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     }
 
     @SuppressLint("MissingPermission")
-    private void getLocation()
-    {
-        if(checkPermissions())
-        {
+    private void getLocation() {
+        if (checkPermissions()) {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
@@ -515,23 +566,17 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         }
     }
 
-    public void askLocationPermission()
-    {
-        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED)
-        {
-            if(ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION))
-            {
+    public void askLocationPermission() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Log.d(TAG, "askLocationPermission: alertbox here");
-                ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
-            }
-            else
-            {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
             }
         }
     }
-
 
 
 }

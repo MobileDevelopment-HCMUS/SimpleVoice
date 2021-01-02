@@ -27,6 +27,16 @@ public class ListRecord extends AppCompatActivity {
     ArrayList<Record> listRecord;
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_record);

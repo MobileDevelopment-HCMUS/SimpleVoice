@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,7 @@ public class PauseRecord extends AppCompatActivity {
     TextView timeRecordTxt;
     Chronometer currentPlayingRecordTime;
     long pauseOffset;
+    String filePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class PauseRecord extends AppCompatActivity {
         currentPlayingRecordTime = findViewById(R.id.time_record_PauseScreen);
 
         pauseOffset = getIntent().getLongExtra("time", 0);
+        filePath = getIntent().getStringExtra("filePath");
+
         currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
 
 

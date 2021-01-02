@@ -3,7 +3,6 @@ package com.example.voicerecorder;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -31,7 +30,7 @@ import java.io.IOException;
 public class PlayingRecordScreen extends AppCompatActivity {
 
     Toolbar toolbar;
-    Chronometer currentPlayingRecordTime,totalTime;
+    Chronometer currentPlayingRecordTime, totalTime;
     Button repeatButton, prevSecondButton, nextSecondButton, playButton, settingButton, playingRecordVolumeButton;
     TextView playingRecordName;
     TextView newName;
@@ -45,7 +44,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
     CircleLineVisualizer circleLineVisualizer;
 
-
+    boolean isInterupted = false;
     long pauseOffset;
     int TotalPlayingRecordTime = 5;
     public int currentSpeed = 2;
@@ -64,13 +63,44 @@ public class PlayingRecordScreen extends AppCompatActivity {
     PlaybackManager playbackManager;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if(isInterupted){
+            playbackManager.resumePlayback();
+            currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+            currentPlayingRecordTime.start();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(isPlaying){
+            playbackManager.pausePlayback();
+            currentPlayingRecordTime.stop();
+            pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
+
+        }
+        isInterupted =true;
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playing_record_screen);
 
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-//        pathStr = bundle.getString("path");
+
         playbackManager = new PlaybackManager();
 
         toolbar = findViewById(R.id.PlayingRecordToolBar);
@@ -94,7 +124,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
         playbackManager.setOutputFile(pathStr);
         try {
             playbackManager.prepareplayBack();
-        }catch (IOException exception){
+        } catch (IOException exception) {
             exception.printStackTrace();
         }
 
@@ -140,29 +170,32 @@ public class PlayingRecordScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isPlaying) {
-                    if(pauseOffset==0){
-                        pauseOffset =0;
+                    if (pauseOffset == 0) {
                         playbackManager.stopPlayback();
+                        playbackManager = new PlaybackManager();
+                        playbackManager.setProgressBar(progressBar);
+                        playbackManager.setProgressBar(progressBar);
+
                         playbackManager.setOutputFile(pathStr);
                         try {
                             playbackManager.prepareplayBack();
-                        }catch (IOException ioException){
+                        } catch (IOException ioException) {
                             ioException.printStackTrace();
                         }
                     }
+                    if (pauseOffset != 0) {
+                        playbackManager.resumePlayback();
+                    }
                     playButton.setBackgroundResource(R.drawable.pause);
                     isPlaying = true;
+                    playbackManager.setCircleLineVisualizer(circleLineVisualizer);
 
-
-                    playbackManager.setPitch(1.0f+(currentTone-3)*0.2f);
-                    playbackManager.setSpeed(1.0f+(currentSpeed-2)*0.25f);
+                    playbackManager.setPitch(1.0f + (currentTone - 3) * 0.2f);
+                    playbackManager.setSpeed(1.0f + (currentSpeed - 2) * 0.25f);
                     playbackManager.startPlayback();
 
                     currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                     currentPlayingRecordTime.start();
-
-
-                    playbackManager.setCircleLineVisualizer(circleLineVisualizer);
 
 
                     progressBar.setProgress(0);
@@ -173,6 +206,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     isPlaying = false;
                     currentPlayingRecordTime.stop();
                     pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
+                    playbackManager.pausePlayback();
                 }
 
             }
@@ -181,7 +215,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
         currentPlayingRecordTime.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
-               if ((SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase()) / 1000 == TotalPlayingRecordTime/1000) {
+                if ((SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase()) / 1000 == TotalPlayingRecordTime / 1000) {
                     currentPlayingRecordTime.stop();
                     isPlaying = false;
                     playButton.setBackgroundResource(R.drawable.play);
