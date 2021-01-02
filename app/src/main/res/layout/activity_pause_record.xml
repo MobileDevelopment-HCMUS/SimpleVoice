@@ -21,14 +21,16 @@
         android:gravity="bottom"
         android:orientation="vertical">
 
-        <TextView
+        <Chronometer
+
+            android:id="@+id/time_record_PauseScreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:fontFamily="@font/quicksand_book"
-            android:text="00:00:01"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textColor="@color/orange"
-            android:textSize="55dp" />
+            android:textSize="50sp" />
 
         <TextView
             android:layout_width="match_parent"

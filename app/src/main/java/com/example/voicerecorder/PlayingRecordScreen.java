@@ -26,11 +26,12 @@ import androidx.appcompat.widget.Toolbar;
 import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
 
 import java.io.File;
+import java.io.IOException;
 
 public class PlayingRecordScreen extends AppCompatActivity {
 
     Toolbar toolbar;
-    Chronometer currentPlayingRecordTime;
+    Chronometer currentPlayingRecordTime,totalTime;
     Button repeatButton, prevSecondButton, nextSecondButton, playButton, settingButton, playingRecordVolumeButton;
     TextView playingRecordName;
     TextView newName;
@@ -71,10 +72,10 @@ public class PlayingRecordScreen extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 //        pathStr = bundle.getString("path");
         playbackManager = new PlaybackManager();
-        pathStr = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
 
         toolbar = findViewById(R.id.PlayingRecordToolBar);
         currentPlayingRecordTime = findViewById((R.id.currentPlayingRecordTime));
+        totalTime = findViewById(R.id.totalPlayingRecordTime_Speech);
         repeatButton = findViewById(R.id.repeatButton);
         prevSecondButton = findViewById(R.id.prevSecondButton);
         nextSecondButton = findViewById(R.id.nextSecondButton);
@@ -84,11 +85,22 @@ public class PlayingRecordScreen extends AppCompatActivity {
         playingRecordName = findViewById(R.id.playingRecordName);
         circleLineVisualizer = findViewById(R.id.blobVisualizer);
         progressBar = findViewById(R.id.progressBar);
-
+        playbackManager.setProgressBar(progressBar);
 
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
 
+        pathStr = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
+        playbackManager.setOutputFile(pathStr);
+        try {
+            playbackManager.prepareplayBack();
+        }catch (IOException exception){
+            exception.printStackTrace();
+        }
+
+
+        TotalPlayingRecordTime = playbackManager.getDuration();
+        totalTime.setBase(SystemClock.elapsedRealtime() - TotalPlayingRecordTime);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,21 +140,31 @@ public class PlayingRecordScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isPlaying) {
+                    if(pauseOffset==0){
+                        pauseOffset =0;
+                        playbackManager.stopPlayback();
+                        playbackManager.setOutputFile(pathStr);
+                        try {
+                            playbackManager.prepareplayBack();
+                        }catch (IOException ioException){
+                            ioException.printStackTrace();
+                        }
+                    }
                     playButton.setBackgroundResource(R.drawable.pause);
                     isPlaying = true;
 
-                    playbackManager.setOutputFile(pathStr);
+
                     playbackManager.setPitch(1.0f+(currentTone-3)*0.2f);
                     playbackManager.setSpeed(1.0f+(currentSpeed-2)*0.25f);
                     playbackManager.startPlayback();
 
                     currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                     currentPlayingRecordTime.start();
-                    playbackManager.setDuration(TotalPlayingRecordTime);
+
 
                     playbackManager.setCircleLineVisualizer(circleLineVisualizer);
 
-                    playbackManager.setProgressBar(progressBar);
+
                     progressBar.setProgress(0);
                     progressBar.setVisibility(View.VISIBLE);
 
@@ -159,7 +181,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
         currentPlayingRecordTime.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
-                if ((SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase()) / 1000 == TotalPlayingRecordTime) {
+               if ((SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase()) / 1000 == TotalPlayingRecordTime/1000) {
                     currentPlayingRecordTime.stop();
                     isPlaying = false;
                     playButton.setBackgroundResource(R.drawable.play);
@@ -368,5 +390,12 @@ public class PlayingRecordScreen extends AppCompatActivity {
             finish();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (circleLineVisualizer != null)
+            circleLineVisualizer.release();
     }
 }
