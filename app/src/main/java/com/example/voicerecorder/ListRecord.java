@@ -1,7 +1,9 @@
 package com.example.voicerecorder;
 
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -31,16 +34,49 @@ public class ListRecord extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_record);
 
+        String path = getApplicationContext().getFilesDir().getPath();
+        Log.d("Files", "Path:" +path);
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: "+ files.length);
         listRecord = new ArrayList<Record>();
         Date date = new Date();
-        listRecord.add(new Record("Voice01", 20, date, 500));
-        listRecord.add(new Record("Voice02", 30, date, 500));
-        listRecord.add(new Record("Voice03", 16, date, 500));
-        listRecord.add(new Record("Voice04", 11, date, 500));
-        listRecord.add(new Record("Voice05", 19, date, 500));
-        listRecord.add(new Record("Voice06", 33, date, 500));
-        listRecord.add(new Record("Voice07", 12, date, 500));
-        listRecord.add(new Record("Voice08", 20, date, 500));
+
+        //load data file
+        MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
+
+        for (int i = 0; i < files.length; i++)
+        {
+            /*String[] temp = files[i].getName().split("\\.");
+
+            String fileName = temp[0];*/
+            Log.d("Files", "FileName:" + files[i].getName());
+            int file_size = Integer.parseInt(String.valueOf(files[i].length()/1024));
+
+            metaRetriever.setDataSource(files[i].getPath());
+
+            String time = "";
+            String duration = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            Log.d("time", duration);
+            long dur = Long.parseLong(duration);
+            String seconds = String.valueOf((dur%60000)/1000);
+
+            Log.d("Seconds", seconds);
+            String minutes = String.valueOf(dur/60000);
+
+
+            if(seconds.length() == 1) {
+                time = minutes + ":0" + seconds;
+            } else {
+                time = minutes + ":" + seconds;
+            }
+
+            listRecord.add(new Record(files[i].getName(), time, date, file_size));
+        }
+
+        //close object
+        metaRetriever.release();
+
 
 
         listViewRecord = findViewById(R.id.lis_recording);

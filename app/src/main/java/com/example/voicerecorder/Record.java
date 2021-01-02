@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class Record {
     public String Name;
-    public int Time;
+    public String Time;
     public Date date;
     public int Size;
 
-    public Record(String name, int time, Date date, int size){
+    public Record(String name, String time, Date date, int size){
         Name = name;
         this.date = date;
         Size = size;
@@ -27,7 +27,7 @@ public class Record {
         return Size;
     }
 
-    public int getTime() {
+    public String getTime() {
         return Time;
     }
 
@@ -43,7 +43,7 @@ public class Record {
         Size = size;
     }
 
-    public void setTime(int time) {
+    public void setTime(String time) {
         Time = time;
     }
 }
