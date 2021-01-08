@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.File;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,6 +58,8 @@ public class ListRecord extends AppCompatActivity {
             int file_size = Integer.parseInt(String.valueOf(files[i].length()/1024));
 
             metaRetriever.setDataSource(files[i].getPath());
+            String filePath = "";
+            filePath = files[i].getPath();
 
             String time = "";
             String duration = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
@@ -73,8 +76,14 @@ public class ListRecord extends AppCompatActivity {
             } else {
                 time = minutes + ":" + seconds;
             }
-
-            listRecord.add(new Record(files[i].getName(), time, lastModDate, file_size));
+            Record tmp = new Record(files[i].getName(), time, filePath, lastModDate, file_size);
+            String loc = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
+            String[] s = loc.split("(?='+'|-|/)");
+            if(s.length >= 2) {
+                tmp.setLocation(Double.parseDouble(s[0]), Double.parseDouble(s[1]));
+            }
+            Log.d("LOC", s[0] + "," + s[1]);
+            listRecord.add(tmp);
         }
 
         //close object
@@ -109,6 +118,7 @@ public class ListRecord extends AppCompatActivity {
                 String path="";
                 Bundle bundle =new Bundle();
                 bundle.putString("path",path);
+                bundle.putSerializable("record", (Serializable) listRecord.get(position));
                 Intent intent = new Intent(ListRecord.this,PlayingRecordScreen.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
