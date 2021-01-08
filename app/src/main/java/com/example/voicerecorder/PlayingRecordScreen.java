@@ -43,7 +43,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
     Toolbar toolbar;
     Chronometer currentPlayingRecordTime, totalTime;
-    Button repeatButton, prevSecondButton, nextSecondButton, playButton, settingButton, playingRecordVolumeButton;
+    Button repeatButton, prevSecondButton, nextSecondButton, playButton, settingButton;
     TextView playingRecordName;
     TextView newName;
     Button OKButton_Rename, CancelButton_Rename;
@@ -135,7 +135,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
         nextSecondButton = findViewById(R.id.nextSecondButton);
         playButton = findViewById(R.id.playButton);
         settingButton = findViewById(R.id.settingButton);
-        playingRecordVolumeButton = findViewById(R.id.playingRecordVolumeButton);
         playingRecordName = findViewById(R.id.playingRecordName);
         circleLineVisualizer = findViewById(R.id.blobVisualizer);
         progressBar = findViewById(R.id.progressBar);
@@ -264,20 +263,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
                 createNewSettingContactDialog();
             }
         });
-
-        // Playing Record Volume Button OnClick
-        playingRecordVolumeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isVolume) {
-                    playingRecordVolumeButton.setBackgroundResource(R.drawable.volume_outline);
-                    isVolume = false;
-                } else {
-                    playingRecordVolumeButton.setBackgroundResource(R.drawable.volume_fill);
-                    isVolume = true;
-                }
-            }
-        });
     }
 
     @Override
@@ -342,6 +327,12 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     Toast.makeText(PlayingRecordScreen.this, "isEmpty", Toast.LENGTH_SHORT).show();
                 } else {
                     playingRecordName.setText(newName.getText().toString());
+                    // do here
+                    File oldFile = new File(pathStr);
+                    String recordPath = PlayingRecordScreen.this.getExternalFilesDir("/").getAbsolutePath();
+                    String newPath = recordPath + "/" + newName.getText().toString();
+                    File newFile = new File(newPath);
+                    oldFile.renameTo(newFile);
                     dialog_Rename.dismiss();
                 }
             }

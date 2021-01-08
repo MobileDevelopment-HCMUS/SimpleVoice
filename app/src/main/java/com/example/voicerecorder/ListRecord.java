@@ -46,7 +46,7 @@ public class ListRecord extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_record);
 
-        String path = getApplicationContext().getFilesDir().getPath();
+        String path = getApplicationContext().getExternalFilesDir("/").getAbsolutePath();
         Log.d("Files", "Path:" +path);
         File directory = new File(path);
         File[] files = directory.listFiles();

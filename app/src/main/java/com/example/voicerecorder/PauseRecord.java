@@ -133,7 +133,7 @@ public class PauseRecord extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.US);
         Date now = new Date();
 
-        String recordFile = simpleDateFormat.format(now) + ".mp3";
+        String recordFile = "record_" + simpleDateFormat.format(now) + ".mp3";
 
         String newPath = recordPath + "/" + recordFile;
         File newFile = new File(newPath);
