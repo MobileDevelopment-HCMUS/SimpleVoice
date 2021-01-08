@@ -327,10 +327,10 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                     e.printStackTrace();
                 }
                 getLocation();
-                recordManager.startRecord();
-                recordManager.startPlotting(graphView);
-                samples = recordManager.getSamples();
-                graphView.showFullGraph(samples);
+//                recordManager.startRecord();
+//                recordManager.startPlotting(graphView);
+//                samples = recordManager.getSamples();
+//                graphView.showFullGraph(samples);
 
             }
 
@@ -375,11 +375,19 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                     recordManager.setLocation((float) location.getLatitude(), (float) location.getLongitude());
                     Log.d(TAG, location.toString());
                     Log.d(TAG, "Get location successful");
+                    recordManager.startRecord();
+                    recordManager.startPlotting(graphView);
+                    samples = recordManager.getSamples();
+                    graphView.showFullGraph(samples);
                 }
             }).addOnFailureListener(this, new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.e(TAG, "Cannot get location");
+                    recordManager.startRecord();
+                    recordManager.startPlotting(graphView);
+                    samples = recordManager.getSamples();
+                    graphView.showFullGraph(samples);
                 }
             });
 

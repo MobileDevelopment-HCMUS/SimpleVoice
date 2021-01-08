@@ -1,6 +1,7 @@
 package com.example.voicerecorder;
 
 import android.media.MediaRecorder;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,8 +123,10 @@ public class RecordManager {
         mr.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
         mr.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         mr.setOutputFile(file.getAbsolutePath());
+
         if(!(latitude == 0 && longitude == 0))
             mr.setLocation(latitude, longitude);
+        Log.d("LOC", String.valueOf(latitude));
     }
 
     public void stopRecord() {
