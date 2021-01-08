@@ -454,7 +454,12 @@ public class PlayingRecordScreen extends AppCompatActivity {
         yesButton_Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File oldFile = new File(pathStr);
+                oldFile.delete();
 
+                Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
+                startActivity(intent);
+                finish();
                 dialog_Delete.dismiss();
             }
         });
@@ -462,7 +467,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
         noButton_Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 dialog_Delete.dismiss();
             }
         });
