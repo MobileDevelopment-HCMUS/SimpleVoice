@@ -333,6 +333,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     String newPath = recordPath + "/" + newName.getText().toString();
                     File newFile = new File(newPath);
                     oldFile.renameTo(newFile);
+                    record.setName(newName.getText().toString());
                     dialog_Rename.dismiss();
                 }
             }
