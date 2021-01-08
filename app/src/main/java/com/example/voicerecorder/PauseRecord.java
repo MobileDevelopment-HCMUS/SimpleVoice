@@ -17,6 +17,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.api.Backend;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class PauseRecord extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -108,12 +115,30 @@ public class PauseRecord extends AppCompatActivity {
     }
 
     void backToMainActivity() {
+        String oldPath = PauseRecord.this.getExternalFilesDir("/").getAbsolutePath() + "/temp.mp3";
+        File oldFile = new File(oldPath);
+        oldFile.delete();
+
         Intent intent = new Intent(PauseRecord.this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
     void goToListReordActivity() {
+
+        String oldPath = PauseRecord.this.getExternalFilesDir("/").getAbsolutePath() + "/temp.mp3";
+        File oldFile = new File(oldPath);
+
+        String recordPath = PauseRecord.this.getExternalFilesDir("/").getAbsolutePath();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.US);
+        Date now = new Date();
+
+        String recordFile = simpleDateFormat.format(now) + ".mp3";
+
+        String newPath = recordPath + "/" + recordFile;
+        File newFile = new File(newPath);
+        oldFile.renameTo(newFile);
+
         Intent intent = new Intent(PauseRecord.this, ListRecord.class);
         startActivity(intent);
         finish();

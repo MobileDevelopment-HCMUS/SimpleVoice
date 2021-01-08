@@ -1,9 +1,15 @@
 package com.example.voicerecorder;
 
 import android.media.MediaRecorder;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 

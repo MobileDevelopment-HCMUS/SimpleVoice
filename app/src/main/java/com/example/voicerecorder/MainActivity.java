@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
         recordManager = new RecordManager();
-        path = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
+        path = MainActivity.this.getExternalFilesDir("/").getAbsolutePath() + "/temp.mp3";
         //create fragment start record
         ft = getSupportFragmentManager().beginTransaction();
         startRecordFragment = StartRecordFragment.newIntance("second_fragment");
@@ -244,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             askLocationPermission();
             Log.d(TAG, "This is Permission request");
         }
+
         if (isInterupted == 1 && recorded) {
 
             Intent intent = new Intent(this, PauseRecord.class);
@@ -378,11 +379,12 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                     e.printStackTrace();
                 }
                 getLocation();
+
                 recordManager.startRecord();
+
                 recordManager.startPlotting(graphView);
                 samples = recordManager.getSamples();
                 graphView.showFullGraph(samples);
-
             }
 
         }
@@ -423,8 +425,8 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
-                    recordManager.setLocation((float) location.getLatitude(), (float) location.getLongitude());
-                    Log.d(TAG, location.toString());
+//                    recordManager.setLocation((float) location.getLatitude(), (float) location.getLongitude());
+//                    Log.d(TAG, location.toString());
                     Log.d(TAG, "Get location successful");
                 }
             }).addOnFailureListener(this, new OnFailureListener() {
@@ -536,6 +538,12 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
+    private boolean checkRecordPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
     private void requestPermissions() {
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -578,5 +586,15 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         }
     }
 
-
+    public void askRecordPermission() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) !=
+                PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                Log.d(TAG, "askLocationPermission: alertbox here");
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, 21);
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, 21);
+            }
+        }
+    }
 }
