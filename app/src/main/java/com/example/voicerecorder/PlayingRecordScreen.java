@@ -73,29 +73,62 @@ public class PlayingRecordScreen extends AppCompatActivity {
     Dialog dialog_Delete;
 
     PlaybackManager playbackManager;
+    PlaybackManager.Callback callback = new PlaybackManager.Callback() {
+        @Override
+        public void onCompletion() {
+            super.onCompletion();
+            TotalPlayingRecordTime = playbackManager.getDuration();
+            totalTime.setBase(SystemClock.elapsedRealtime() - TotalPlayingRecordTime);
+            pauseOffset = 0;
+            isPlaying = false;
+            currentPlayingRecordTime.stop();
+            playButton.setBackgroundResource(R.drawable.play);
+            currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+
+            if (isRepeat) {
+                try {
+                    isPlaying = true;
+                    playbackManager.preparePlayback();
+                    playbackManager.startPlayback(callback);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                settingButton.setEnabled(false);
+                currentPlayingRecordTime.start();
+            } else {
+                settingButton.setEnabled(true);
+            }
+
+            progressBar.setProgress(0);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    };
     Record record;
     String location;
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(isInterupted){
-            playbackManager.resumePlayback();
-            currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
-            currentPlayingRecordTime.start();
+        if (isInterupted) {
+            if (isPlaying) {
+                playbackManager.resumePlayback();
+                currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+                currentPlayingRecordTime.start();
+            }
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(isPlaying){
+        if (isPlaying) {
             playbackManager.pausePlayback();
             currentPlayingRecordTime.stop();
             pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
 
         }
-        isInterupted =true;
+        isInterupted = true;
     }
 
 
@@ -146,7 +179,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
         //pathStr = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
         playbackManager.setOutputFile(pathStr);
         try {
-            playbackManager.prepareplayBack();
+            playbackManager.preparePlayback();
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -199,11 +232,10 @@ public class PlayingRecordScreen extends AppCompatActivity {
                         playbackManager.stopPlayback();
                         playbackManager = new PlaybackManager();
                         playbackManager.setProgressBar(progressBar);
-                        playbackManager.setProgressBar(progressBar);
 
                         playbackManager.setOutputFile(pathStr);
                         try {
-                            playbackManager.prepareplayBack();
+                            playbackManager.preparePlayback();
                         } catch (IOException ioException) {
                             ioException.printStackTrace();
                         }
@@ -214,10 +246,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     playButton.setBackgroundResource(R.drawable.pause);
                     isPlaying = true;
                     playbackManager.setCircleLineVisualizer(circleLineVisualizer);
-
-                    playbackManager.setPitch(1.0f + (currentTone - 3) * 0.2f);
-                    playbackManager.setSpeed(1.0f + (currentSpeed - 2) * 0.25f);
-                    playbackManager.startPlayback();
+                    playbackManager.startPlayback(callback);
 
                     currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                     currentPlayingRecordTime.start();
@@ -225,6 +254,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
                     progressBar.setProgress(0);
                     progressBar.setVisibility(View.VISIBLE);
+                    settingButton.setEnabled(false);
 
                 } else {
                     playButton.setBackgroundResource(R.drawable.play);
@@ -237,17 +267,14 @@ public class PlayingRecordScreen extends AppCompatActivity {
             }
         });
 
-        currentPlayingRecordTime.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                if ((SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase()) / 1000 == TotalPlayingRecordTime / 1000) {
-                    currentPlayingRecordTime.stop();
-                    isPlaying = false;
-                    playButton.setBackgroundResource(R.drawable.play);
-                    pauseOffset = 0;
-                }
-            }
-        });
+//        currentPlayingRecordTime.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+//            @Override
+//            public void onChronometerTick(Chronometer chronometer) {
+//                if ((SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase()) / 1000 == TotalPlayingRecordTime / 1000) {
+//
+//                }
+//            }
+//        });
 
         // Next Second Button OnClick
         nextSecondButton.setOnClickListener(new View.OnClickListener() {
@@ -432,6 +459,13 @@ public class PlayingRecordScreen extends AppCompatActivity {
                 currentSpeed = speedSeekBar.getProgress();
                 currentTone = toneSeekBar.getProgress();
                 dialog_Setting.dismiss();
+                playbackManager.setPitch(1.0f + (currentTone - 3) * 0.2f);
+                playbackManager.setSpeed(1.0f + (currentSpeed - 2) * 0.25f);
+                try {
+                    playbackManager.preparePlayback();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
 
@@ -456,7 +490,12 @@ public class PlayingRecordScreen extends AppCompatActivity {
         yesButton_Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File oldFile = new File(pathStr);
+                oldFile.delete();
 
+                Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
+                startActivity(intent);
+                finish();
                 dialog_Delete.dismiss();
             }
         });
@@ -464,7 +503,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
         noButton_Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 dialog_Delete.dismiss();
             }
         });
