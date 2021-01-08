@@ -23,7 +23,7 @@
             android:layout_marginRight="0dp"
             android:layout_weight="49"
             android:fontFamily="@font/quicksand_book"
-            android:text="Voice 06"
+            android:text="Voice"
             android:textColor="@color/white"
             android:textFontWeight="999"
             android:textSize="23sp" />

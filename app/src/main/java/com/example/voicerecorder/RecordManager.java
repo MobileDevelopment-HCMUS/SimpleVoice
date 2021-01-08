@@ -6,6 +6,8 @@ import android.os.VibrationEffect;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import android.util.Log;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -140,6 +142,7 @@ public class RecordManager {
         mr.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
         mr.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         mr.setOutputFile(file.getAbsolutePath());
+
         if(!(latitude == 0 && longitude == 0))
             mr.setLocation(latitude, longitude);
         mr.setMaxDuration(10800000); //3 hours = 10800000 ms
@@ -151,6 +154,7 @@ public class RecordManager {
                 }
             }
         });
+        Log.d("LOC", String.valueOf(latitude));
     }
 
     public void stopRecord() {

@@ -22,10 +22,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayingRecordScreen extends AppCompatActivity {
 
@@ -35,7 +47,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
     TextView playingRecordName;
     TextView newName;
     Button OKButton_Rename, CancelButton_Rename;
-    TextView name, size, lastModified, bitRate, path;
+    TextView name, size, lastModified, bitRate, path, loc;
     Button OKButton_Detail;
     SeekBar toneSeekBar, speedSeekBar;
     ProgressBar progressBar;
@@ -61,6 +73,8 @@ public class PlayingRecordScreen extends AppCompatActivity {
     Dialog dialog_Delete;
 
     PlaybackManager playbackManager;
+    Record record;
+    String location;
 
     @Override
     protected void onStart() {
@@ -100,6 +114,16 @@ public class PlayingRecordScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playing_record_screen);
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        record = (Record) bundle.getSerializable("record");
+        //pathStr = bundle.getString("path");
+        pathStr = (record != null?record.getPath():(getApplicationContext().getFilesDir().getPath() + "/test.mp3"));
+        try {
+            httpRequest(String.valueOf(record.getLatitude()), String.valueOf(record.getLongitude()));
+        } catch (InterruptedException e) {
+            location = "Vietnam";
+        }
 
         playbackManager = new PlaybackManager();
 
@@ -116,11 +140,11 @@ public class PlayingRecordScreen extends AppCompatActivity {
         circleLineVisualizer = findViewById(R.id.blobVisualizer);
         progressBar = findViewById(R.id.progressBar);
         playbackManager.setProgressBar(progressBar);
-
+        playingRecordName.setText(record.getName());
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
 
-        pathStr = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
+        //pathStr = getApplicationContext().getFilesDir().getPath() + "/test.mp3";
         playbackManager.setOutputFile(pathStr);
         try {
             playbackManager.prepareplayBack();
@@ -342,10 +366,18 @@ public class PlayingRecordScreen extends AppCompatActivity {
         name = dialog_Detail.findViewById(R.id.name);
         size = dialog_Detail.findViewById(R.id.size);
         lastModified = dialog_Detail.findViewById(R.id.lastModified);
-        bitRate = dialog_Detail.findViewById(R.id.lastModified);
+        bitRate = dialog_Detail.findViewById(R.id.bitRate);
         path = dialog_Detail.findViewById(R.id.path);
+        loc = dialog_Detail.findViewById(R.id.location);
         OKButton_Detail = dialog_Detail.findViewById(R.id.OKButton_Detail);
 
+
+        name.setText(record.getName());
+        size.setText(String.valueOf(record.getSize()) + " KB");
+        path.setText(record.getPath());
+        loc.setText(location);
+        lastModified.setText(record.getDate().toString());
+        Log.d("LOC", record.getLatitude() + "," + record.getLongitude());
         OKButton_Detail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -356,7 +388,38 @@ public class PlayingRecordScreen extends AppCompatActivity {
         dialog_Detail.show();
     }
 
-    public void createNewSettingContactDialog() {
+    private void httpRequest(String la, String lo) throws InterruptedException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + la + "," + lo
+                + "&key=" + "AIzaSyDDqJ5Dycd21ulm4SpHXGnEWMenVv41cyA";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    location = jsonFormatter(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                location = "Vietnam";
+            }
+        });
+        queue.add(stringRequest);
+    }
+
+    private String jsonFormatter(String json) throws JSONException {
+        JSONObject j = new JSONObject(json);
+        JSONArray jArrResult = j.getJSONArray("results");
+        return jArrResult.getJSONObject(0).getString("formatted_address");
+    }
+
+
+
+        public void createNewSettingContactDialog() {
 
         dialog_Setting = new Dialog(this);
         dialog_Setting.setContentView(R.layout.popup_setting);
