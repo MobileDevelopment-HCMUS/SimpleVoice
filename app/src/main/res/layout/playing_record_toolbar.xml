@@ -23,17 +23,9 @@
             android:layout_marginRight="0dp"
             android:layout_weight="49"
             android:fontFamily="@font/quicksand_book"
-            android:text="Voice 06"
+            android:text="Voice"
             android:textColor="@color/white"
             android:textFontWeight="999"
-            android:textSize="23sp" />
-
-        <Button
-            android:id="@+id/playingRecordVolumeButton"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_weight="1"
-            android:background="@color/tranparent"
-            android:foreground="@drawable/volume_outline"/>
+            android:textSize="18sp" />
     </LinearLayout>
 </androidx.appcompat.widget.Toolbar>
