@@ -29,7 +29,6 @@ public class PlaybackManager {
     }
 
 
-
     public static abstract class Callback {
 
         /**
@@ -57,14 +56,18 @@ public class PlaybackManager {
     public void setPitch(float pitch) {
         this.pitch = pitch;
     }
+
     public void setSpeed(float speed) {
         this.speed = speed;
     }
 
-    public void prepareplayBack() throws IOException {
-        mMediaPlayer = new MediaPlayer();
+    public void preparePlayback() throws IOException {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.reset();
+        }
         if (mMediaPlayer == null) {
-            return;
+            mMediaPlayer = new MediaPlayer();
+
         }
         mMediaPlayer.setDataSource(file.getAbsolutePath());
 
@@ -84,8 +87,6 @@ public class PlaybackManager {
                 if (mCallback != null) {
                     mCallback.onCompletion();
                 }
-                mMediaPlayer.release();
-                mMediaPlayer = null;
             }
 
         });
@@ -98,7 +99,7 @@ public class PlaybackManager {
 //        if (mMediaPlayer != null) {
 //            return;
 //        }
-        if(mMediaPlayer==null){
+        if (mMediaPlayer == null) {
             return;
         }
         mCallback = (callbacks.length > 0) ? callbacks[0] : null;
@@ -111,11 +112,11 @@ public class PlaybackManager {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            try{
+                            try {
                                 while (getPosition() < progressBar.getMax()) {
                                     progressBar.setProgress(getPosition());
                                 }
-                            }catch (IllegalStateException e){
+                            } catch (IllegalStateException e) {
                                 throw e;
                             }
                         }
@@ -135,13 +136,13 @@ public class PlaybackManager {
     }
 
     private synchronized void start() throws IOException {
-        if(mMediaPlayer!=null){
+        if (mMediaPlayer != null) {
             mMediaPlayer.start();
         }
     }
 
     public void stopPlayback() {
-        if (mCallback == null) {
+        if (mMediaPlayer == null) {
             return;
         }
         mMediaPlayer.release();
@@ -171,8 +172,8 @@ public class PlaybackManager {
         if (mMediaPlayer != null) {
             try {
                 return mMediaPlayer.getCurrentPosition();
-            }catch (IllegalStateException e){
-               return 0;
+            } catch (IllegalStateException e) {
+                return 0;
             }
         } else {
             return 0;
