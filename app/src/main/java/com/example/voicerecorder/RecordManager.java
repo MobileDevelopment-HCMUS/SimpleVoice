@@ -26,6 +26,17 @@ public class RecordManager {
     private float latitude = 0;
     private float longitude = 0;
 
+    public static abstract class Callback {
+
+        /**
+         * Khi đạt giới hạn thời gian
+         */
+        public void onReachedMaxDuration() {
+        }
+    }
+
+    private Callback mCallback;
+
     public boolean startPlotting(GraphView graphView) {
         if (graphView != null) {
             this.graphView = graphView;
@@ -83,10 +94,11 @@ public class RecordManager {
         return result;
     }
 
-    public void startRecord() {
+    public void startRecord(Callback... callbacks) {
         if (mMediaRecorder != null) {
             return;
         }
+        mCallback = (callbacks.length > 0) ? callbacks[0] : null;
         pointList.clear();
         startTime = System.currentTimeMillis();
         new Thread(new Runnable() {
@@ -130,6 +142,15 @@ public class RecordManager {
         mr.setOutputFile(file.getAbsolutePath());
         if(!(latitude == 0 && longitude == 0))
             mr.setLocation(latitude, longitude);
+        mr.setMaxDuration(10800000); //3 hours = 10800000 ms
+        mr.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+            @Override
+            public void onInfo(MediaRecorder mr, int what, int extra) {
+                if (what==MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+                    mCallback.onReachedMaxDuration();
+                }
+            }
+        });
     }
 
     public void stopRecord() {

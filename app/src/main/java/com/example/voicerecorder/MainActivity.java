@@ -357,34 +357,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
             if (booleanstr.equals("START") == true) {
 
-                recorded = true;
-                clicked = true;
-
-                //create fragment recording button fragment
-                ft = getSupportFragmentManager().beginTransaction();
-                recordingNavbarFragment = RecordingNavbarFragment.newIntance("third_fragment");
-                ft.replace(R.id.button_function_fragment, recordingNavbarFragment);
-                ft.commit();
-
-                isRecording = true;
-                if (recorded) {
-                    currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
-                }
-                recordManager = new RecordManager();
-                currentPlayingRecordTime.start();
-
-                try {
-                    recordManager.setOutputFile(path);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                getLocation();
-
-                recordManager.startRecord();
-
-                recordManager.startPlotting(graphView);
-                samples = recordManager.getSamples();
-                graphView.showFullGraph(samples);
+                startRecordDisplay();
             }
 
         }
@@ -392,23 +365,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         if (sender.equals("RECORDING") == true) {
 
             if (booleanstr.equals("STOP") == true) {
-                if (isRecording) {
-                    pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
-                }
-                isRecording = false;
-                currentPlayingRecordTime.stop();
-
-
-                //Stop recording
-                recordManager.stopRecord();
-                graphView.stopPlotting();
-                samples = recordManager.getSamples();
-                graphView.showFullGraph(samples);
-
-                Intent intent = new Intent(this, PauseRecord.class);
-                intent.putExtra("time", pauseOffset);
-                startActivity(intent);
-                finish();
+                stopRecordDisplay();
             }
             if (booleanstr.equals("PLAY") == true) {
 
@@ -417,6 +374,65 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
             }
         }
+    }
+
+    RecordManager.Callback recordCallback= new RecordManager.Callback() {
+        @Override
+        public void onReachedMaxDuration() {
+            super.onReachedMaxDuration();
+            stopRecordDisplay();
+        }
+    };
+
+    private void stopRecordDisplay() {
+        if (isRecording) {
+            pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
+        }
+        isRecording = false;
+        currentPlayingRecordTime.stop();
+
+
+        //Stop recording
+        recordManager.stopRecord();
+        graphView.stopPlotting();
+        samples = recordManager.getSamples();
+        graphView.showFullGraph(samples);
+
+        Intent intent = new Intent(this, PauseRecord.class);
+        intent.putExtra("time", pauseOffset);
+        startActivity(intent);
+        finish();
+    }
+
+    private void startRecordDisplay() {
+        recorded = true;
+        clicked = true;
+
+        //create fragment recording button fragment
+        ft = getSupportFragmentManager().beginTransaction();
+        recordingNavbarFragment = RecordingNavbarFragment.newIntance("third_fragment");
+        ft.replace(R.id.button_function_fragment, recordingNavbarFragment);
+        ft.commit();
+
+        isRecording = true;
+        if (recorded) {
+            currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+        }
+        recordManager = new RecordManager();
+        currentPlayingRecordTime.start();
+
+        try {
+            recordManager.setOutputFile(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        getLocation();
+
+        recordManager.startRecord(recordCallback);
+
+        recordManager.startPlotting(graphView);
+        samples = recordManager.getSamples();
+        graphView.showFullGraph(samples);
     }
 
     @SuppressLint("MissingPermission")
