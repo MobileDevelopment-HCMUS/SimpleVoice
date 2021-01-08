@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -40,7 +41,7 @@ public class ListRecord extends AppCompatActivity {
         File[] files = directory.listFiles();
         Log.d("Files", "Size: "+ files.length);
         listRecord = new ArrayList<Record>();
-        Date date = new Date();
+
 
         //load data file
         MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
@@ -50,6 +51,8 @@ public class ListRecord extends AppCompatActivity {
             /*String[] temp = files[i].getName().split("\\.");
 
             String fileName = temp[0];*/
+            Date lastModDate = new Date(files[i].lastModified());
+
             Log.d("Files", "FileName:" + files[i].getName());
             int file_size = Integer.parseInt(String.valueOf(files[i].length()/1024));
 
@@ -71,7 +74,7 @@ public class ListRecord extends AppCompatActivity {
                 time = minutes + ":" + seconds;
             }
 
-            listRecord.add(new Record(files[i].getName(), time, date, file_size));
+            listRecord.add(new Record(files[i].getName(), time, lastModDate, file_size));
         }
 
         //close object

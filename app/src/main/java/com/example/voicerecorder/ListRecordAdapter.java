@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +42,12 @@ public class ListRecordAdapter extends ArrayAdapter<Record> {
             nameRecord = row.findViewById(R.id.name_record);
             timeRecord = row.findViewById(R.id.time_record);
             sizeRecord = row.findViewById(R.id.size_record);
+            dateRecord = row.findViewById(R.id.date);
 
             nameRecord.setText(list.get(position).getName());
             timeRecord.setText(String.valueOf(list.get(position).getTime())+" minutes");
-            //dateRecord.setText(list.get(position).getDate().toString());
+            String date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(list.get(position).getDate());
+            dateRecord.setText(date.toString());
             sizeRecord.setText(String.valueOf(list.get(position).getSize())+" KB");
 
         }
