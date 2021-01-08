@@ -21,6 +21,7 @@ public class RecordManager {
     private static File file;
     private List<WaveSample> pointList = new ArrayList<>();
     private long startTime = 0;
+    private long pauseTime = 0;
     private String outputFilePath;
     private volatile Boolean stop = false;
     private GraphView graphView;
@@ -177,6 +178,28 @@ public class RecordManager {
     public void setLocation(float latitude, float longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+    public void pauseRecord(){
+        if (mMediaRecorder != null) {
+            mMediaRecorder.pause();
+        }
+//        if (graphView != null) {
+//            graphView.stopPlotting();
+//        }
+//        pauseTime = System.currentTimeMillis();
+
+        if (graphView != null) {
+            graphView.pause();
+        }
+    }
+    public void resumeRecord(){
+        if (mMediaRecorder != null) {
+            mMediaRecorder.resume();
+        }
+//        startTime = pauseTime;
+        if (graphView != null) {
+            graphView.resume();
+        }
     }
 
 }

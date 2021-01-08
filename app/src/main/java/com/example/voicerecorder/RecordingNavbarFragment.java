@@ -1,7 +1,6 @@
 package com.example.voicerecorder;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,21 +14,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class RecordingNavbarFragment extends Fragment {
+public class RecordingNavbarFragment extends Fragment implements FragmentCallbacks {
 
     MainActivity main;
     Context context;
 
 
     LinearLayout recording_navbar;
-    Button playBtn,stopBtn,pauseBtn;
+    Button playBtn, stopBtn, pauseBtn;
 
     Animation bottomAnim;
 
-    public static RecordingNavbarFragment newIntance(String strArg){
+    public static RecordingNavbarFragment newIntance(String strArg) {
         RecordingNavbarFragment recordingNavbarFragment = new RecordingNavbarFragment();
         Bundle args = new Bundle();
-        args.putString("strArg2",strArg);
+        args.putString("strArg2", strArg);
         recordingNavbarFragment.setArguments(args);
         return recordingNavbarFragment;
     }
@@ -41,7 +40,7 @@ public class RecordingNavbarFragment extends Fragment {
         try {
             context = getActivity();
             main = (MainActivity) getActivity();
-        }catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
     }
@@ -51,17 +50,17 @@ public class RecordingNavbarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        recording_navbar = (LinearLayout) inflater.inflate(R.layout.nav_bar_bottom_recording,null);
+        recording_navbar = (LinearLayout) inflater.inflate(R.layout.nav_bar_bottom_recording, null);
 
         //Animation
-        bottomAnim = AnimationUtils.loadAnimation(main,R.anim.bottom_animation);
+        bottomAnim = AnimationUtils.loadAnimation(main, R.anim.bottom_animation);
 
 
         playBtn = recording_navbar.findViewById(R.id.play_navbutton);
         stopBtn = recording_navbar.findViewById(R.id.stop_navbutton);
         pauseBtn = recording_navbar.findViewById(R.id.pause_navbutton);
-
-       bottomAnim.setDuration(100);
+        playBtn.setVisibility(View.INVISIBLE);
+        bottomAnim.setDuration(100);
 
         playBtn.setAnimation(bottomAnim);
         stopBtn.setAnimation(bottomAnim);
@@ -72,7 +71,8 @@ public class RecordingNavbarFragment extends Fragment {
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                main.onMsgFromFragmentToMain("RECORDING","PLAY");
+
+                main.onMsgFromFragmentToMain("RECORDING", "RESUME");
             }
         });
 
@@ -80,7 +80,7 @@ public class RecordingNavbarFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                main.onMsgFromFragmentToMain("RECORDING","STOP");
+                main.onMsgFromFragmentToMain("RECORDING", "STOP");
 
             }
         });
@@ -89,7 +89,7 @@ public class RecordingNavbarFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                main.onMsgFromFragmentToMain("RECORDING","PAUSE");
+                main.onMsgFromFragmentToMain("RECORDING", "PAUSE");
 
             }
         });
@@ -97,4 +97,17 @@ public class RecordingNavbarFragment extends Fragment {
         return recording_navbar;
     }
 
+    @Override
+    public void onMsgFromMainToFragment(String status) {
+        if (status == "PAUSE_CLICK") {
+            playBtn.setVisibility(View.VISIBLE);
+            playBtn.setEnabled(true);
+            pauseBtn.setVisibility(View.INVISIBLE);
+        }
+        if (status == "RESUME_CLICK") {
+            pauseBtn.setVisibility(View.VISIBLE);
+            pauseBtn.setEnabled(true);
+            playBtn.setVisibility(View.INVISIBLE);
+        }
+    }
 }

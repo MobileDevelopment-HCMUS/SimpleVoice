@@ -144,6 +144,7 @@ public class PlaybackManager {
         if (mCallback == null) {
             return;
         }
+        mMediaPlayer.stop();
         mMediaPlayer.release();
         mMediaPlayer = null;
         duration = 0;

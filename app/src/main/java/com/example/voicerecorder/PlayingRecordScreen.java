@@ -158,9 +158,11 @@ public class PlayingRecordScreen extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playbackManager.stopPlayback();
                 Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
                 startActivity(intent);
                 finish();
+
             }
         });
 
@@ -170,10 +172,10 @@ public class PlayingRecordScreen extends AppCompatActivity {
             public void onClick(View v) {
                 if (!isRepeat) {
 
-                    repeatButton.setBackgroundResource(R.drawable.repeat);
+                    repeatButton.setForeground(getResources().getDrawable(R.drawable.repeat));
                     isRepeat = true;
                 } else {
-                    repeatButton.setBackgroundResource(R.drawable.unrepeat);
+                    repeatButton.setForeground(getResources().getDrawable(R.drawable.unrepeat));
                     isRepeat = false;
                 }
             }
@@ -474,6 +476,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            playbackManager.stopPlayback();
             Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
             startActivity(intent);
             finish();

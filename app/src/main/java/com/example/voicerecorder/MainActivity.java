@@ -367,16 +367,19 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             if (booleanstr.equals("STOP") == true) {
                 stopRecordDisplay();
             }
-            if (booleanstr.equals("PLAY") == true) {
+            if (booleanstr.equals("RESUME") == true) {
+                recordingNavbarFragment.onMsgFromMainToFragment("RESUME_CLICK");
+                resumeRecord();
 
             }
             if (booleanstr.equals("PAUSE") == true) {
-
+                pauseRecord();
+                recordingNavbarFragment.onMsgFromMainToFragment("PAUSE_CLICK");
             }
         }
     }
 
-    RecordManager.Callback recordCallback= new RecordManager.Callback() {
+    RecordManager.Callback recordCallback = new RecordManager.Callback() {
         @Override
         public void onReachedMaxDuration() {
             super.onReachedMaxDuration();
@@ -402,6 +405,31 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         intent.putExtra("time", pauseOffset);
         startActivity(intent);
         finish();
+    }
+    private void resumeRecord(){
+        isRecording = true;
+        if (recorded) {
+            currentPlayingRecordTime.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+        }
+        currentPlayingRecordTime.start();
+        recordManager.resumeRecord();
+//        recordManager.startPlotting(graphView);
+
+
+    }
+
+    private void pauseRecord() {
+        if (isRecording) {
+            pauseOffset = SystemClock.elapsedRealtime() - currentPlayingRecordTime.getBase();
+        }
+        isRecording = false;
+        currentPlayingRecordTime.stop();
+
+
+        recordManager.pauseRecord();
+//        graphView.stopPlotting();
+//        samples = recordManager.getSamples();
+//        graphView.showFullGraph(samples);
     }
 
     private void startRecordDisplay() {
