@@ -204,7 +204,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isRepeat) {
-
                     repeatButton.setForeground(getResources().getDrawable(R.drawable.repeat));
                     isRepeat = true;
                 } else {

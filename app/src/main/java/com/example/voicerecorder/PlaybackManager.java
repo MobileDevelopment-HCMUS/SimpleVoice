@@ -62,13 +62,12 @@ public class PlaybackManager {
     }
 
     public void preparePlayback() throws IOException {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
-        }
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
-
+        } else {
+            mMediaPlayer.reset();
         }
+
         mMediaPlayer.setDataSource(file.getAbsolutePath());
 
         PlaybackParams playbackParams = new PlaybackParams();
@@ -95,6 +94,7 @@ public class PlaybackManager {
         duration = mMediaPlayer.getDuration();
     }
 
+    private Thread updateProgressThread;
     public void startPlayback(Callback... callbacks) {
 //        if (mMediaPlayer != null) {
 //            return;
@@ -109,7 +109,7 @@ public class PlaybackManager {
                 try {
                     start();
                     progressBar.setMax(duration);
-                    new Thread(new Runnable() {
+                    updateProgressThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -120,8 +120,8 @@ public class PlaybackManager {
                                 throw e;
                             }
                         }
-                    }).start();
-
+                    });
+                    updateProgressThread.start();
 
                     int audiosessionid = mMediaPlayer.getAudioSessionId();
                     if (audiosessionid != -1) {
@@ -145,6 +145,9 @@ public class PlaybackManager {
         if (mMediaPlayer == null) {
             return;
         }
+        if (updateProgressThread!=null) {
+            updateProgressThread.interrupt();
+        }
         mMediaPlayer.stop();
         mMediaPlayer.release();
         mMediaPlayer = null;
@@ -156,6 +159,7 @@ public class PlaybackManager {
             return;
         }
         mMediaPlayer.pause();
+        updateProgressThread.stop();
     }
 
     public void resumePlayback() {
@@ -163,6 +167,7 @@ public class PlaybackManager {
             return;
         }
         mMediaPlayer.start();
+        updateProgressThread.run();
     }
 
     public int getDuration() {
