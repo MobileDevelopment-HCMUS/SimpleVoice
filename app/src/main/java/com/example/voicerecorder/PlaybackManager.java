@@ -108,20 +108,20 @@ public class PlaybackManager {
             public void run() {
                 try {
                     start();
-                    progressBar.setMax(duration);
-                    updateProgressThread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                while (getPosition() < progressBar.getMax()) {
-                                    progressBar.setProgress(getPosition());
-                                }
-                            } catch (IllegalStateException e) {
-                                throw e;
-                            }
-                        }
-                    });
-                    updateProgressThread.start();
+//                    progressBar.setMax(duration);
+//                    updateProgressThread = new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                while (getPosition() < progressBar.getMax()) {
+//                                    progressBar.setProgress(getPosition());
+//                                }
+//                            } catch (IllegalStateException e) {
+//                                throw e;
+//                            }
+//                        }
+//                    });
+//                    updateProgressThread.start();
 
                     int audiosessionid = mMediaPlayer.getAudioSessionId();
                     if (audiosessionid != -1) {

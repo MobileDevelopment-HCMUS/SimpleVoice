@@ -100,6 +100,20 @@ public class PlayingRecordScreen extends AppCompatActivity {
                 settingButton.setEnabled(true);
             }
 
+            progressBar.setMax(playbackManager.getDuration());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        while (isPlaying) {
+                            progressBar.setProgress(playbackManager.getPosition());
+                        }
+                    } catch (IllegalStateException e) {
+                        throw e;
+                    }
+                }
+            }).start();
+
             progressBar.setProgress(0);
             progressBar.setVisibility(View.VISIBLE);
         }
@@ -151,7 +165,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         record = (Record) bundle.getSerializable("record");
         //pathStr = bundle.getString("path");
-        pathStr = (record != null?record.getPath():(getApplicationContext().getFilesDir().getPath() + "/test.mp3"));
+        pathStr = (record != null ? record.getPath() : (getApplicationContext().getFilesDir().getPath() + "/test.mp3"));
         try {
             httpRequest(String.valueOf(record.getLatitude()), String.valueOf(record.getLongitude()));
         } catch (InterruptedException e) {
@@ -192,6 +206,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 playbackManager.stopPlayback();
+                isPlaying = false;
                 Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
                 startActivity(intent);
                 finish();
@@ -230,8 +245,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     if (pauseOffset == 0) {
                         playbackManager.stopPlayback();
                         playbackManager = new PlaybackManager();
-                        playbackManager.setProgressBar(progressBar);
-
                         playbackManager.setOutputFile(pathStr);
                         try {
                             playbackManager.preparePlayback();
@@ -253,6 +266,19 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
                     progressBar.setProgress(0);
                     progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setMax(playbackManager.getDuration());
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                while (isPlaying) {
+                                    progressBar.setProgress(playbackManager.getPosition());
+                                }
+                            } catch (IllegalStateException e) {
+                                throw e;
+                            }
+                        }
+                    }).start();
                     settingButton.setEnabled(false);
 
                 } else {
@@ -425,8 +451,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
     }
 
 
-
-        public void createNewSettingContactDialog() {
+    public void createNewSettingContactDialog() {
 
         dialog_Setting = new Dialog(this);
         dialog_Setting.setContentView(R.layout.popup_setting);
@@ -501,6 +526,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             playbackManager.stopPlayback();
+            isPlaying = false;
             Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
             startActivity(intent);
             finish();
