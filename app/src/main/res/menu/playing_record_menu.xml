@@ -2,9 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/editItem"
-        android:title="@string/edit" />
-    <item
         android:id="@+id/renameItem"
         android:title="@string/rename" />
     <item
@@ -14,13 +11,6 @@
         android:id="@+id/shareItem"
         android:title="@string/share" />
     <item
-        android:id="@+id/convertSpeechToTextItem"
-        android:title="@string/convert_speech_to_text" />
-    <item
-        android:id="@+id/mouseToSecureFolderItem"
-        android:title="@string/mouse_to_secure_folder" />
-    <item
         android:id="@+id/deleteItem"
         android:title="@string/delete" />
-
 </menu>

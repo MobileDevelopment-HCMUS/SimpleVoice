@@ -329,10 +329,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.editItem: {
-                Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show();
-            }
-            return true;
             case R.id.renameItem: {
                 createNewRenameContactDialog();
             }
@@ -345,15 +341,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
                 Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
                 Log.d("Path: ", pathStr);
                 Sharing.shareFile(PlayingRecordScreen.this, new File(pathStr));
-            }
-            return true;
-            case R.id.convertSpeechToTextItem: {
-                Intent i = new Intent(PlayingRecordScreen.this, SpeechToTextScreen.class);
-                startActivity(i);
-            }
-            return true;
-            case R.id.mouseToSecureFolderItem: {
-                Toast.makeText(this, "Mouse To Secure Folder", Toast.LENGTH_SHORT).show();
             }
             return true;
             case R.id.deleteItem: {
