@@ -1,3 +1,4 @@
 <paths>
     <files-path path="." name="records" />
+    <external-files-path path="." name="file"/>
 </paths>

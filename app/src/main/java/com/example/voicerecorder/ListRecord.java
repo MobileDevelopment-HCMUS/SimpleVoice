@@ -87,14 +87,18 @@ public class ListRecord extends AppCompatActivity {
                 time = minutes + ":" + seconds;
             }
             Record tmp = new Record(files[i].getName(), time, filePath, lastModDate, file_size);
+
             String loc = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
-            String[] s = new String[0];
+            if(loc != null) Log.d("RAW", loc);
+
             if(loc != null) {
-                s = loc.split("(?='+'|-|/)");
-            }
-            if(s.length >= 2) {
-                tmp.setLocation(Double.parseDouble(s[0]), Double.parseDouble(s[1]));
-                Log.d("LOC", s[0] + "," + s[1]);
+                String[] s = loc.split("(?=\\+|-|/)");
+                Log.d("LEN", String.valueOf(s.length));
+                Log.d("LOC", String.valueOf(s[0]));
+                if(s.length >= 2 && s[0] != "" && s[1] != "") {
+                    tmp.setLocation(Double.parseDouble(s[1]), Double.parseDouble(s[2]));
+                    Log.d("LOC", s[1] + "," + s[2]);
+                }
             }
 
             listRecord.add(tmp);

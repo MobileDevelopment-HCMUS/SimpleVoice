@@ -53,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.MODIFY_AUDIO_SETTINGS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
     };
     private static final int INITIAL_REQUEST = 1401;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -98,6 +99,10 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        if (!checkPermissions()) {
+//            askLocationPermission();
+//            Log.d(TAG, "This is Permission request");
+//        }
         requestRecordPermission();
         setContentView(R.layout.activity_main);
 
@@ -252,10 +257,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     @Override
     protected void onStart() {
         super.onStart();
-        if (!checkPermissions()) {
-            askLocationPermission();
-            Log.d(TAG, "This is Permission request");
-        }
+
 
         if (isInterupted == 1 && recorded) {
 
@@ -468,11 +470,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         }
         getLocation();
 
-        recordManager.startRecord(recordCallback);
 
-        recordManager.startPlotting(graphView);
-        samples = recordManager.getSamples();
-        graphView.showFullGraph(samples);
     }
 
     @SuppressLint("MissingPermission")
@@ -481,18 +479,34 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
-//                    recordManager.setLocation((float) location.getLatitude(), (float) location.getLongitude());
-//                    Log.d(TAG, location.toString());
-                    Log.d(TAG, "Get location successful");
+                    if(location != null) {
+                      recordManager.setLocation((float) location.getLatitude(), (float) location.getLongitude());
+                      Log.d(TAG, location.toString());
+                      Log.d(TAG, "Get location successful");
+                        recordManager.startRecord(recordCallback);
+                        recordManager.startPlotting(graphView);
+                        samples = recordManager.getSamples();
+                        graphView.showFullGraph(samples);
+                    }
                 }
             }).addOnFailureListener(this, new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+
                     Log.e(TAG, "Cannot get location");
+                    recordManager.startRecord(recordCallback);
+                    recordManager.startPlotting(graphView);
+                    samples = recordManager.getSamples();
+                    graphView.showFullGraph(samples);
                 }
             });
 
 
+        } else {
+            recordManager.startRecord(recordCallback);
+            recordManager.startPlotting(graphView);
+            samples = recordManager.getSamples();
+            graphView.showFullGraph(samples);
         }
     }
 //    public void zoomIn(View v) {
