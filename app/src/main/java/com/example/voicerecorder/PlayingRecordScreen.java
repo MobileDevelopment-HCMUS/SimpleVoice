@@ -87,33 +87,21 @@ public class PlayingRecordScreen extends AppCompatActivity {
 
             if (isRepeat) {
                 try {
+                    isPlaying = true;
                     playbackManager.preparePlayback();
                     playbackManager.startPlayback(callback);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                isPlaying = true;
-                playButton.setBackgroundResource(R.drawable.pause);
+
                 settingButton.setEnabled(false);
                 currentPlayingRecordTime.start();
             } else {
                 settingButton.setEnabled(true);
             }
-            progressBar.setMax(playbackManager.getDuration());
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        while (isPlaying) {
-                            progressBar.setProgress(playbackManager.getPosition());
-                        }
-                    } catch (IllegalStateException e) {
-                        throw e;
-                    }
-                }
-            }).start();
             progressBar.setProgress(0);
+            progressBar.setVisibility(View.VISIBLE);
         }
     };
     Record record;
@@ -203,8 +191,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playbackManager.stopPlayback();
-                isPlaying=false;
                 Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
                 startActivity(intent);
                 finish();
@@ -217,10 +203,10 @@ public class PlayingRecordScreen extends AppCompatActivity {
             public void onClick(View v) {
                 if (!isRepeat) {
 
-                    repeatButton.setForeground(getDrawable(R.drawable.repeat));
+                    repeatButton.setBackgroundResource(R.drawable.repeat);
                     isRepeat = true;
                 } else {
-                    repeatButton.setForeground(getDrawable(R.drawable.unrepeat));
+                    repeatButton.setBackgroundResource(R.drawable.unrepeat);
                     isRepeat = false;
                 }
             }
@@ -243,7 +229,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     if (pauseOffset == 0) {
                         playbackManager.stopPlayback();
                         playbackManager = new PlaybackManager();
-//                        playbackManager.setProgressBar(progressBar);
+                        playbackManager.setProgressBar(progressBar);
 
                         playbackManager.setOutputFile(pathStr);
                         try {
@@ -264,21 +250,8 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     currentPlayingRecordTime.start();
 
 
-                    //progressBar.setProgress(0);
+                    progressBar.setProgress(0);
                     progressBar.setVisibility(View.VISIBLE);
-                    progressBar.setMax(playbackManager.getDuration());
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                while (isPlaying) {
-                                    progressBar.setProgress(playbackManager.getPosition());
-                                }
-                            } catch (IllegalStateException e) {
-                                throw e;
-                            }
-                        }
-                    }).start();
                     settingButton.setEnabled(false);
 
                 } else {
@@ -371,7 +344,7 @@ public class PlayingRecordScreen extends AppCompatActivity {
                     // do here
                     File oldFile = new File(pathStr);
                     String recordPath = PlayingRecordScreen.this.getExternalFilesDir("/").getAbsolutePath();
-                    String newPath = recordPath + "/" + newName.getText().toString();
+                    String newPath = recordPath + "/" + newName.getText().toString() + ".mp3";
                     File newFile = new File(newPath);
                     oldFile.renameTo(newFile);
                     record.setName(newName.getText().toString());
@@ -526,8 +499,6 @@ public class PlayingRecordScreen extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            playbackManager.stopPlayback();
-            isPlaying=false;
             Intent intent = new Intent(PlayingRecordScreen.this, ListRecord.class);
             startActivity(intent);
             finish();

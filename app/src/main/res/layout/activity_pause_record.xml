@@ -63,24 +63,17 @@
         android:orientation="horizontal">
 
         <Button
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/discard_button"
             android:background="@color/tranparent"
             android:foreground="@drawable/x" />
 
         <Button
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:background="@color/tranparent"
-            android:foreground="@drawable/play" />
-
-        <Button
+            android:layout_marginLeft="180dp"
             android:id="@+id/tick_button"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@color/tranparent"
             android:foreground="@drawable/tick" />
 
