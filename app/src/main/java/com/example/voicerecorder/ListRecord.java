@@ -90,7 +90,7 @@ public class ListRecord extends AppCompatActivity {
             String loc = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
             String[] s = new String[0];
             if(loc != null) {
-                s = loc.split("(?='+'|-|/)");
+                s = loc.split("(?=[+\\-/])");
             }
             if(s.length >= 2) {
                 tmp.setLocation(Double.parseDouble(s[0]), Double.parseDouble(s[1]));
