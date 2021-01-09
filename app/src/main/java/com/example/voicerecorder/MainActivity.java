@@ -475,6 +475,10 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
 
         }
+        recordManager.startRecord(recordCallback);
+        recordManager.startPlotting(graphView);
+        samples = recordManager.getSamples();
+        graphView.showFullGraph(samples);
     }
 //    public void zoomIn(View v) {
 //        scale = scale + 1;
